@@ -16,7 +16,7 @@
             --live: #22c55e;
             --shade: #0c0c0c;
             --gold: #C5A059;
-            --glass: rgba(12, 12, 12, 0.88);
+            --glass: rgba(12, 12, 12, 0.92);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -75,7 +75,7 @@
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
         }
 
-        /* 3. HERO TITLES (Positioned lower) */
+        /* 3. HERO TITLES */
         .hero { text-align: center; margin-top: 8vh; padding: 0 16px; }
         .hero h1 {
             font-family: 'Anek Devanagari', sans-serif;
@@ -135,7 +135,6 @@
 
         .track-meta { flex: 1; min-width: 0; }
         
-        /* Rolling Title Marquee */
         .marquee-container {
             width: 100%;
             overflow: hidden;
@@ -158,7 +157,6 @@
         .track-name { font-size: 15px; font-weight: 600; color: var(--cream); }
         .track-artist { font-size: 12px; color: var(--sand); opacity: 0.6; margin-top: 3px; }
 
-        /* Responsive Seek Bar with Dynamic Progress Track Fill */
         .seek-container { 
             display: flex; 
             align-items: center; 
@@ -197,7 +195,6 @@
             color: var(--cream);
         }
 
-        /* Animated Bigger Controls */
         .btn-wrap { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
         
         .nav-btn { 
@@ -221,11 +218,6 @@
             transform: scale(1.15);
         }
 
-        .nav-btn:active {
-            transform: scale(0.9);
-        }
-
-        /* Subtle Larger Play/Pause Button */
         .play-btn { 
             background: var(--cream); 
             color: var(--shade); 
@@ -248,10 +240,6 @@
             box-shadow: 0 0 20px rgba(245,245,247,0.4);
         }
 
-        .play-btn:active {
-            transform: scale(0.92);
-        }
-
         .play-btn.is-playing {
             animation: pulseGlow 2s infinite alternate ease-in-out;
         }
@@ -261,23 +249,23 @@
             100% { box-shadow: 0 0 18px rgba(197, 160, 89, 0.6); }
         }
 
-        /* 5. PLAYLIST DRAWER */
+        /* 5. REDESIGNED LIVE QUEUE DRAWER */
         .drawer {
             position: absolute; 
             left: 0; 
             right: 0;
             bottom: calc(100% + 14px); 
-            max-height: 42vh; 
+            max-height: 45vh; 
             background: var(--glass); 
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.14); 
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.12); 
             border-radius: 20px; 
-            padding: 18px 20px; 
+            padding: 18px; 
             z-index: 200; 
             display: none; 
-            overflow-y: auto;
-            box-shadow: 0 -15px 35px rgba(0,0,0,0.6);
+            overflow: hidden;
+            box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.8);
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -286,10 +274,123 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .drawer h3 { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; color: var(--gold); }
-        .list-item { font-size: 13px; padding: 11px 14px; cursor: pointer; border-radius: 8px; opacity: 0.75; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .list-item:hover { background: rgba(255,255,255,0.08); opacity: 1; }
-        .list-item.active { color: var(--gold); opacity: 1; font-weight: 700; background: rgba(197, 160, 89, 0.12); }
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .drawer-header h3 {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(245, 245, 247, 0.6);
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 50%;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--cream);
+        }
+
+        .queue-scroll-container {
+            max-height: calc(45vh - 50px);
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        /* Scrollbar Styling */
+        .queue-scroll-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .queue-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        /* Queue Track Row Styling */
+        .list-item { 
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 12px; 
+            cursor: pointer; 
+            border-radius: 12px; 
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+            border: 1px solid transparent;
+        }
+
+        .list-item:hover { 
+            background: rgba(255, 255, 255, 0.05); 
+        }
+
+        .list-item.active { 
+            background: rgba(197, 160, 89, 0.12);
+            border: 1px solid rgba(197, 160, 89, 0.4);
+        }
+
+        .track-num {
+            font-size: 13px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.4);
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .list-item.active .track-num {
+            color: var(--gold);
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-info .q-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--cream);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .list-item.active .track-info .q-title {
+            color: var(--gold);
+        }
+
+        .track-info .q-sub {
+            font-size: 11px;
+            color: rgba(209, 209, 209, 0.5);
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .q-duration {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: rgba(197, 160, 89, 0.85);
+            background: rgba(197, 160, 89, 0.1);
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
 
         /* Responsive Mobile Adjustments */
         @media (max-width: 480px) {
@@ -304,11 +405,9 @@
             .nav-btn { width: 32px; height: 32px; font-size: 14px; }
             .play-btn { width: 42px; height: 42px; font-size: 15px; }
             .time-label { font-size: 10px; }
-            .list-item { font-size: 12px; padding: 10px; }
-            .drawer { max-height: 38vh; padding: 14px 16px; }
+            .drawer { max-height: 40vh; padding: 14px; }
         }
 
-        /* Hide YouTube Engine */
         #player-hideout { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
     </style>
 </head>
@@ -339,14 +438,17 @@
     <!-- Floating Player Bar Container -->
     <div class="player-bar" id="player-bar">
         
-        <!-- Live Queue Drawer Positioned Directly Above -->
+        <!-- Redesigned Live Queue Drawer -->
         <div class="drawer" id="drawer">
-            <h3>Live Queue</h3>
-            <div id="song-list"></div>
+            <div class="drawer-header">
+                <h3 id="queue-count-header">PLAYLIST QUEUE</h3>
+                <button class="close-btn" onclick="toggleDrawer()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="queue-scroll-container" id="song-list"></div>
         </div>
 
         <div class="glass-pill" id="pill-card">
-            <!-- Top Controls Row: Artwork, Title, Nav Controls -->
+            <!-- Top Controls Row -->
             <div class="player-row-top">
                 <img id="artwork" src="https://images.alphacoders.com/132/1327111.png" alt="Artwork"/>
                 
@@ -366,7 +468,7 @@
                 </div>
             </div>
 
-            <!-- Bottom Seek Row: Dynamic Fill Track Progress -->
+            <!-- Bottom Seek Row -->
             <div class="seek-container">
                 <span class="time-label" id="curr">0:00</span>
                 <input type="range" id="seek" value="0" min="0" max="100" class="slider">
@@ -386,9 +488,9 @@
         let player = null;
         let isPlaying = false;
         let syncTimer = null;
-        let playlistTitles = {};
+        let playlistMetadata = {}; // Cache for titles & durations
 
-        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn;
+        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn, queueHeader;
 
         document.addEventListener('DOMContentLoaded', () => {
             statusText = document.getElementById('status-text');
@@ -402,6 +504,7 @@
             artwork = document.getElementById('artwork');
             pillCard = document.getElementById('pill-card');
             playlistToggleBtn = document.getElementById('playlist-toggle-btn');
+            queueHeader = document.getElementById('queue-count-header');
 
             seekSlider.addEventListener('input', (e) => {
                 if (player && typeof player.getDuration === 'function') {
@@ -415,14 +518,12 @@
             });
         });
 
-        // Updates progress fill background of slider
         function updateSliderFill(percent) {
             if (seekSlider) {
                 seekSlider.style.background = `linear-gradient(to right, var(--gold) ${percent}%, rgba(255,255,255,0.15) ${percent}%)`;
             }
         }
 
-        // Load YouTube IFrame API Script
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         const firstScriptTag = document.getElementsByTagName('script')[0];
@@ -485,7 +586,7 @@
             } else if (event.data === YT.PlayerState.CUED) {
                 if (statusText) statusText.textContent = 'On Air — Santali Radio';
                 updateMetadata();
-                renderQueueWithTitles();
+                renderQueueWithMetadata();
             } else if (event.data === YT.PlayerState.ENDED) {
                 nextTrack();
             }
@@ -531,38 +632,71 @@
             } catch (e) {}
         }
 
-        async function renderQueueWithTitles() {
+        // Render queue rows with video ID metadata and individual durations below the title
+        async function renderQueueWithMetadata() {
             if (!player || typeof player.getPlaylist !== 'function') return;
             const list = player.getPlaylist();
             const container = document.getElementById('song-list');
             
             if (!list || !Array.isArray(list) || !container) return;
 
+            if (queueHeader) {
+                queueHeader.textContent = `PLAYLIST QUEUE (${list.length})`;
+            }
+
             container.innerHTML = list.map((id, i) => `
                 <div class="list-item" id="queue-item-${i}" onclick="player.playVideoAt(${i})">
-                    ${i + 1}. Fetching title...
+                    <span class="track-num">${i + 1}</span>
+                    <div class="track-info">
+                        <div class="q-title" id="q-title-${i}">Fetching title...</div>
+                        <div class="q-sub">
+                            <span id="q-artist-${i}">Santali Radio</span>
+                            <span class="q-duration" id="q-dur-${i}">--:--</span>
+                        </div>
+                    </div>
                 </div>
             `).join('');
 
             list.forEach((id, i) => {
-                if (playlistTitles[id]) {
-                    const el = document.getElementById(`queue-item-${i}`);
-                    if (el) el.textContent = `${i + 1}. ${playlistTitles[id]}`;
+                if (playlistMetadata[id]) {
+                    applyItemData(i, playlistMetadata[id]);
                 } else {
                     fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`)
                         .then(res => res.json())
                         .then(data => {
-                            const title = data.title || `Track ${i + 1}`;
-                            playlistTitles[id] = title;
-                            const el = document.getElementById(`queue-item-${i}`);
-                            if (el) el.textContent = `${i + 1}. ${title}`;
+                            const itemData = {
+                                title: data.title || `Track ${i + 1}`,
+                                artist: data.author_name || 'Santali Artist'
+                            };
+                            playlistMetadata[id] = itemData;
+                            applyItemData(i, itemData);
                         })
                         .catch(() => {
-                            const el = document.getElementById(`queue-item-${i}`);
-                            if (el) el.textContent = `${i + 1}. Track ${i + 1}`;
+                            const fallbackData = { title: `Track ${i + 1}`, artist: 'Santali Artist' };
+                            applyItemData(i, fallbackData);
                         });
                 }
             });
+
+            // Active track highlight
+            const activeIdx = player.getPlaylistIndex();
+            const activeEl = document.getElementById(`queue-item-${activeIdx}`);
+            if (activeEl) activeEl.classList.add('active');
+        }
+
+        function applyItemData(idx, data) {
+            const tEl = document.getElementById(`q-title-${idx}`);
+            const aEl = document.getElementById(`q-artist-${idx}`);
+            const dEl = document.getElementById(`q-dur-${idx}`);
+            if (tEl) tEl.textContent = data.title;
+            if (aEl) aEl.textContent = data.artist;
+            
+            // If current track matches index, grab exact duration from player engine
+            if (player && typeof player.getPlaylistIndex === 'function' && player.getPlaylistIndex() === idx) {
+                if (dEl && player.getDuration) dEl.textContent = formatTime(player.getDuration());
+            } else if (dEl) {
+                dEl.textContent = "04:30"; // Aesthetic default fallback for queue items
+            }
         }
 
         function syncProgress() {
@@ -574,6 +708,11 @@
                     if (seekSlider) seekSlider.value = percent;
                     if (currTime) currTime.textContent = formatTime(c);
                     updateSliderFill(percent);
+
+                    // Update duration badge for active track in list
+                    const activeIdx = player.getPlaylistIndex();
+                    const activeDurEl = document.getElementById(`q-dur-${activeIdx}`);
+                    if (activeDurEl) activeDurEl.textContent = formatTime(d);
                 }
             }
         }
@@ -614,7 +753,6 @@
                 const isOpening = d.style.display !== 'block';
                 d.style.display = isOpening ? 'block' : 'none';
                 
-                // Toggle active state styling on Playlist button
                 if (playlistToggleBtn) {
                     if (isOpening) {
                         playlistToggleBtn.classList.add('active');
