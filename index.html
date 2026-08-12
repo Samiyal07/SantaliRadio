@@ -36,6 +36,7 @@
       max-width: 400px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
       text-align: center;
+      position: relative;
     }
 
     .brand {
@@ -57,7 +58,7 @@
       background: #0f0d0b;
       border: 2px solid #2f2720;
       border-radius: 12px;
-      padding: 16px;
+      padding: 20px 16px;
       margin-bottom: 20px;
     }
 
@@ -78,12 +79,13 @@
       align-items: center;
       justify-content: center;
       color: var(--text);
+      line-height: 1.4;
     }
 
     .artist-name {
       font-size: 0.85rem;
       color: var(--text-dim);
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     /* Animated Retro Visualizer Bars */
@@ -118,11 +120,9 @@
       100% { height: 22px; }
     }
 
-    audio { width: 100%; margin-bottom: 16px; }
-
     .controls {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 16px;
     }
 
@@ -130,61 +130,42 @@
       background: #2f2720;
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 12px;
+      padding: 14px;
       border-radius: 10px;
       cursor: pointer;
       font-weight: 700;
+      font-size: 1.1rem;
       flex: 1;
       transition: all 0.2s;
     }
 
     .btn:hover { background: #44382e; border-color: var(--accent); }
-    .btn-active { background: var(--accent); color: #000; }
+    .btn-play { background: var(--accent); color: #000; border: none; }
+    .btn-play:hover { background: #d97706; }
 
-    .playlist-toggle {
-      background: transparent;
-      border: none;
-      color: var(--accent);
-      font-size: 0.85rem;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    /* Playlist Drawer */
-    .drawer {
-      display: none;
-      margin-top: 16px;
-      max-height: 200px;
-      overflow-y: auto;
-      border-top: 1px solid var(--border);
-      padding-top: 12px;
-      text-align: left;
-    }
-
-    .track-row {
-      padding: 8px;
-      font-size: 0.85rem;
-      border-radius: 6px;
-      cursor: pointer;
-      white-space: nowrap;
+    /* Hidden YouTube Iframe Player */
+    #yt-hidden-engine {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0.01;
+      pointer-events: none;
       overflow: hidden;
-      text-overflow: ellipsis;
+      bottom: 0;
+      right: 0;
     }
-
-    .track-row:hover { background: #2f2720; color: var(--accent); }
-    .track-row.active { color: var(--accent); font-weight: bold; }
   </style>
 </head>
 <body>
 
   <div class="radio-card">
     <div class="brand">📻 Santali Retro</div>
-    <div class="sub-brand">Classic Nostalgia Engine</div>
+    <div class="sub-brand">100% Reliable Audio Engine</div>
 
     <div class="display-screen">
-      <div class="status" id="status">Booting Radio...</div>
-      <div class="song-title" id="song-title">Loading Playlist...</div>
-      <div class="artist-name" id="artist-name">Santali Audio Collection</div>
+      <div class="status" id="status">Connecting Engine...</div>
+      <div class="song-title" id="song-title">Santali Melodies</div>
+      <div class="artist-name" id="artist-name">YouTube Music Playlist</div>
 
       <div class="visualizer" id="visualizer">
         <div class="bar"></div>
@@ -195,173 +176,137 @@
       </div>
     </div>
 
-    <audio id="audio-player" controls></audio>
-
     <div class="controls">
       <button class="btn" onclick="prevTrack()">⏮</button>
-      <button class="btn" id="shuffle-btn" onclick="toggleShuffle()">🔀</button>
+      <button class="btn btn-play" id="play-btn" onclick="togglePlay()">▶ PLAY</button>
       <button class="btn" onclick="nextTrack()">⏭</button>
     </div>
 
-    <button class="playlist-toggle" onclick="toggleDrawer()">📜 View Full Playlist</button>
-    <div class="drawer" id="drawer"></div>
+    <!-- The underlying engine powering your custom UI -->
+    <div id="yt-hidden-engine">
+      <div id="youtube-player"></div>
+    </div>
   </div>
 
   <script>
-    // YOUR YOUTUBE MUSIC PLAYLIST ID HERE
-    const PLAYLIST_ID = 'PL_FLdyax7a1GZg8a04byPupnG9XNl_Mug';
+    // 📍 YOUR YOUTUBE MUSIC PLAYLIST ID
+    const PLAYLIST_ID = 'PLTJ1PnzCWyFw';
 
-    let playlistTracks = [];
-    let currentIndex = 0;
-    let isShuffle = false;
-    let prefetchedNext = { index: -1, streamUrl: null };
+    let player = null;
+    let isPlaying = false;
 
     const statusEl = document.getElementById('status');
     const titleEl = document.getElementById('song-title');
     const artistEl = document.getElementById('artist-name');
-    const player = document.getElementById('audio-player');
+    const playBtn = document.getElementById('play-btn');
     const visualizer = document.getElementById('visualizer');
-    const drawer = document.getElementById('drawer');
-    const shuffleBtn = document.getElementById('shuffle-btn');
 
-    // 1. Fetch Playlist Tracks on Load
-    async function initRadio() {
-      statusEl.textContent = 'Fetching Playlist';
-      try {
-        const res = await fetch(`/api/playlist?id=${PLAYLIST_ID}`);
-        const data = await res.json();
+    // 1. Asynchronously load YouTube Iframe API
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        if (data.tracks && data.tracks.length > 0) {
-          playlistTracks = data.tracks;
-          statusEl.textContent = 'Radio Ready';
-          renderDrawer();
-          loadAndPlay(0);
-        } else {
-          statusEl.textContent = 'Error';
-          titleEl.textContent = 'Playlist is empty.';
+    // 2. Initialize YouTube Player engine once script loads
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('youtube-player', {
+        height: '200',
+        width: '200',
+        host: 'https://www.youtube.com',
+        playerVars: {
+          listType: 'playlist',
+          list: PLAYLIST_ID,
+          autoplay: 0,
+          controls: 0,
+          enablejsapi: 1
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange,
+          'onError': onPlayerError
         }
-      } catch (err) {
-        statusEl.textContent = 'Network Error';
-        titleEl.textContent = 'Failed to load playlist.';
-      }
+      });
     }
 
-    // 2. Play Track with Background Prefetching
-    async function loadAndPlay(index) {
-      if (index < 0 || index >= playlistTracks.length) return;
+    // 3. Handlers
+    function onPlayerReady(event) {
+      statusEl.textContent = 'Radio Ready';
+      updateMetadata();
+    }
 
-      currentIndex = index;
-      const track = playlistTracks[currentIndex];
-
-      titleEl.textContent = track.title;
-      artistEl.textContent = track.artist;
-      highlightActiveTrack();
-
-      // Check if this track was already pre-fetched
-      if (prefetchedNext.index === index && prefetchedNext.streamUrl) {
+    function onPlayerStateChange(event) {
+      // YT.PlayerState: PLAYING (1), PAUSED (2), BUFFERING (3), ENDED (0)
+      if (event.data === YT.PlayerState.PLAYING) {
+        isPlaying = true;
+        playBtn.textContent = '⏸ PAUSE';
         statusEl.textContent = 'Now Playing';
-        player.src = prefetchedNext.streamUrl;
-        player.play();
-        prefetchNextTrack(); // Prefetch upcoming song!
-        return;
-      }
-
-      statusEl.textContent = 'Extracting Audio...';
-
-      try {
-        const res = await fetch(`/api/extract?id=${track.id}`);
-        const data = await res.json();
-
-        if (data.streamUrl) {
-          statusEl.textContent = 'Now Playing';
-          player.src = data.streamUrl;
-          player.play();
-
-          // Prefetch NEXT song in background for 0-second buffering
-          prefetchNextTrack();
-        } else {
-          throw new Error('Extraction failed');
-        }
-      } catch (err) {
-        statusEl.textContent = 'Skipping...';
-        setTimeout(nextTrack, 800);
+        visualizer.classList.add('playing');
+        updateMetadata();
+      } else if (event.data === YT.PlayerState.PAUSED) {
+        isPlaying = false;
+        playBtn.textContent = '▶ PLAY';
+        statusEl.textContent = 'Paused';
+        visualizer.classList.remove('playing');
+      } else if (event.data === YT.PlayerState.BUFFERING) {
+        statusEl.textContent = 'Buffering...';
       }
     }
 
-    // Background Prefetcher for Next Song
-    async function prefetchNextTrack() {
-      const nextIndex = (currentIndex + 1) % playlistTracks.length;
-      const nextTrackObj = playlistTracks[nextIndex];
+    // Catch restricted/deleted tracks and automatically jump to next
+    function onPlayerError(event) {
+      console.warn('Track restricted or unplayable (Code: ' + event.data + '). Auto-skipping...');
+      statusEl.textContent = 'Skipping restricted track...';
+      setTimeout(() => {
+        nextTrack();
+      }, 500);
+    }
 
+    function updateMetadata() {
       try {
-        const res = await fetch(`/api/extract?id=${nextTrackObj.id}`);
-        const data = await res.json();
-        if (data.streamUrl) {
-          prefetchedNext = { index: nextIndex, streamUrl: data.streamUrl };
+        if (player && typeof player.getVideoData === 'function') {
+          const data = player.getVideoData();
+          if (data && data.title) {
+            titleEl.textContent = data.title;
+            artistEl.textContent = data.author || 'Santali Artist';
+          }
         }
-      } catch (e) {
-        // Silent fail for prefetch
+      } catch (e) {}
+    }
+
+    function togglePlay() {
+      if (!player) return;
+      if (isPlaying) {
+        player.pauseVideo();
+      } else {
+        player.playVideo();
       }
     }
 
     function nextTrack() {
-      if (isShuffle) {
-        currentIndex = Math.floor(Math.random() * playlistTracks.length);
-      } else {
-        currentIndex = (currentIndex + 1) % playlistTracks.length;
+      if (player && typeof player.nextVideo === 'function') {
+        statusEl.textContent = 'Loading Next...';
+        player.nextVideo();
       }
-      loadAndPlay(currentIndex);
     }
 
     function prevTrack() {
-      currentIndex = (currentIndex - 1 + playlistTracks.length) % playlistTracks.length;
-      loadAndPlay(currentIndex);
+      if (player && typeof player.previousVideo === 'function') {
+        statusEl.textContent = 'Loading Prev...';
+        player.previousVideo();
+      }
     }
-
-    function toggleShuffle() {
-      isShuffle = !isShuffle;
-      shuffleBtn.classList.toggle('btn-active', isShuffle);
-    }
-
-    function toggleDrawer() {
-      drawer.style.display = drawer.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function renderDrawer() {
-      drawer.innerHTML = '';
-      playlistTracks.forEach((track, i) => {
-        const row = document.createElement('div');
-        row.className = `track-row ${i === currentIndex ? 'active' : ''}`;
-        row.textContent = `${i + 1}. ${track.title}`;
-        row.onclick = () => loadAndPlay(i);
-        drawer.appendChild(row);
-      });
-    }
-
-    function highlightActiveTrack() {
-      const rows = drawer.querySelectorAll('.track-row');
-      rows.forEach((r, i) => r.classList.toggle('active', i === currentIndex));
-    }
-
-    // Visualizer Animations
-    player.onplay = () => visualizer.classList.add('playing');
-    player.onpause = () => visualizer.classList.remove('playing');
-    player.onended = nextTrack;
 
     // Keyboard Shortcuts
     document.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
-        player.paused ? player.play() : player.pause();
+        togglePlay();
       } else if (e.code === 'ArrowRight') {
         nextTrack();
       } else if (e.code === 'ArrowLeft') {
         prevTrack();
       }
     });
-
-    // Initialize
-    initRadio();
   </script>
 </body>
 </html>
