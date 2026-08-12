@@ -249,7 +249,7 @@
             100% { box-shadow: 0 0 18px rgba(197, 160, 89, 0.6); }
         }
 
-        /* 5. REDESIGNED LIVE QUEUE DRAWER */
+        /* 5. LIVE QUEUE DRAWER (REDUCED SONG ROW GAPS & CLEAN DURATION) */
         .drawer {
             position: absolute; 
             left: 0; 
@@ -261,7 +261,7 @@
             -webkit-backdrop-filter: blur(28px);
             border: 1px solid rgba(255, 255, 255, 0.12); 
             border-radius: 20px; 
-            padding: 18px; 
+            padding: 14px 16px; 
             z-index: 200; 
             display: none; 
             overflow: hidden;
@@ -278,8 +278,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 12px;
-            margin-bottom: 8px;
+            padding-bottom: 8px;
+            margin-bottom: 6px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -307,12 +307,11 @@
         }
 
         .queue-scroll-container {
-            max-height: calc(45vh - 50px);
+            max-height: calc(45vh - 45px);
             overflow-y: auto;
             padding-right: 4px;
         }
 
-        /* Scrollbar Styling */
         .queue-scroll-container::-webkit-scrollbar {
             width: 4px;
         }
@@ -321,16 +320,16 @@
             border-radius: 4px;
         }
 
-        /* Queue Track Row Styling */
+        /* Tighter Track Item Gap */
         .list-item { 
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 10px 12px; 
+            gap: 12px;
+            padding: 6px 10px; 
             cursor: pointer; 
-            border-radius: 12px; 
+            border-radius: 10px; 
             transition: all 0.2s ease;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             border: 1px solid transparent;
         }
 
@@ -340,14 +339,14 @@
 
         .list-item.active { 
             background: rgba(197, 160, 89, 0.12);
-            border: 1px solid rgba(197, 160, 89, 0.4);
+            border: 1px solid rgba(197, 160, 89, 0.3);
         }
 
         .track-num {
-            font-size: 13px;
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.4);
-            width: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.35);
+            width: 18px;
             text-align: center;
             flex-shrink: 0;
         }
@@ -368,6 +367,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: 1.2;
         }
 
         .list-item.active .track-info .q-title {
@@ -377,19 +377,23 @@
         .track-info .q-sub {
             font-size: 11px;
             color: rgba(209, 209, 209, 0.5);
-            margin-top: 2px;
+            margin-top: 1px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
+        /* Un-highlighted Inline Duration */
         .q-duration {
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
-            color: rgba(197, 160, 89, 0.85);
-            background: rgba(197, 160, 89, 0.1);
-            padding: 1px 6px;
-            border-radius: 4px;
+            color: rgba(209, 209, 209, 0.45);
+        }
+
+        .q-duration::before {
+            content: "•";
+            margin-right: 6px;
+            opacity: 0.5;
         }
 
         /* Responsive Mobile Adjustments */
@@ -405,7 +409,8 @@
             .nav-btn { width: 32px; height: 32px; font-size: 14px; }
             .play-btn { width: 42px; height: 42px; font-size: 15px; }
             .time-label { font-size: 10px; }
-            .drawer { max-height: 40vh; padding: 14px; }
+            .list-item { padding: 6px 8px; }
+            .drawer { max-height: 40vh; padding: 12px; }
         }
 
         #player-hideout { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -438,7 +443,7 @@
     <!-- Floating Player Bar Container -->
     <div class="player-bar" id="player-bar">
         
-        <!-- Redesigned Live Queue Drawer -->
+        <!-- Live Queue Drawer -->
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <h3 id="queue-count-header">PLAYLIST QUEUE</h3>
@@ -488,7 +493,7 @@
         let player = null;
         let isPlaying = false;
         let syncTimer = null;
-        let playlistMetadata = {}; // Cache for titles & durations
+        let playlistMetadata = {};
 
         let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn, queueHeader;
 
@@ -632,7 +637,6 @@
             } catch (e) {}
         }
 
-        // Render queue rows with video ID metadata and individual durations below the title
         async function renderQueueWithMetadata() {
             if (!player || typeof player.getPlaylist !== 'function') return;
             const list = player.getPlaylist();
@@ -678,7 +682,6 @@
                 }
             });
 
-            // Active track highlight
             const activeIdx = player.getPlaylistIndex();
             const activeEl = document.getElementById(`queue-item-${activeIdx}`);
             if (activeEl) activeEl.classList.add('active');
@@ -691,11 +694,10 @@
             if (tEl) tEl.textContent = data.title;
             if (aEl) aEl.textContent = data.artist;
             
-            // If current track matches index, grab exact duration from player engine
             if (player && typeof player.getPlaylistIndex === 'function' && player.getPlaylistIndex() === idx) {
                 if (dEl && player.getDuration) dEl.textContent = formatTime(player.getDuration());
             } else if (dEl) {
-                dEl.textContent = "04:30"; // Aesthetic default fallback for queue items
+                dEl.textContent = "04:30";
             }
         }
 
@@ -709,7 +711,6 @@
                     if (currTime) currTime.textContent = formatTime(c);
                     updateSliderFill(percent);
 
-                    // Update duration badge for active track in list
                     const activeIdx = player.getPlaylistIndex();
                     const activeDurEl = document.getElementById(`q-dur-${activeIdx}`);
                     if (activeDurEl) activeDurEl.textContent = formatTime(d);
