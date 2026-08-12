@@ -51,23 +51,47 @@
         .dot::after { content: ''; position: absolute; inset: 0; background: var(--live); border-radius: 50%; animation: ping 1.5s infinite; }
         @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
 
-        /* 3. HERO TITLES */
-        .hero { text-align: center; margin-top: 4vh; padding: 0 16px; }
+        /* Playlist Toggle Button Styling */
+        .playlist-btn {
+            background: none; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            color: white; 
+            padding: 8px 18px; 
+            border-radius: 99px; 
+            font-size: 11px; 
+            font-weight: 600;
+            cursor: pointer; 
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .playlist-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .playlist-btn.active {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
+        }
+
+        /* 3. HERO TITLES (Positioned lower) */
+        .hero { text-align: center; margin-top: 8vh; padding: 0 16px; }
         .hero h1 {
             font-family: 'Anek Devanagari', sans-serif;
             font-size: clamp(4rem, 11vw, 8.5rem);
             line-height: 0.85; color: var(--cream);
             filter: drop-shadow(0 15px 40px rgba(0,0,0,0.8));
         }
-        .hero p { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; margin-top: 18px; color: rgba(245,245,247,0.5); }
+        .hero p { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; margin-top: 20px; color: rgba(245,245,247,0.5); }
 
         /* 4. FLOATING PLAYER CONTAINER */
         .player-bar {
             position: fixed; 
-            bottom: max(16px, env(safe-area-inset-bottom)); 
+            bottom: max(20px, env(safe-area-inset-bottom)); 
             left: 50%; 
             transform: translateX(-50%);
-            width: min(92%, 620px); 
+            width: min(92%, 640px); 
             z-index: 300;
         }
 
@@ -77,23 +101,23 @@
             -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(255,255,255,0.14); 
             border-radius: 28px;
-            padding: 14px 20px; 
+            padding: 16px 22px; 
             display: flex; 
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.7);
         }
 
         .player-row-top {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
             width: 100%;
         }
 
         #artwork { 
-            width: 46px; 
-            height: 46px; 
+            width: 52px; 
+            height: 52px; 
             border-radius: 50%; 
             object-fit: cover; 
             border: 2px solid rgba(255,255,255,0.15); 
@@ -131,54 +155,59 @@
             100% { transform: translateX(-50%); }
         }
 
-        .track-name { font-size: 13px; font-weight: 600; color: var(--cream); }
-        .track-artist { font-size: 11px; color: var(--sand); opacity: 0.5; margin-top: 2px; }
+        .track-name { font-size: 15px; font-weight: 600; color: var(--cream); }
+        .track-artist { font-size: 12px; color: var(--sand); opacity: 0.6; margin-top: 3px; }
 
-        /* Responsive Seek / Time Container */
+        /* Responsive Seek Bar with Dynamic Progress Track Fill */
         .seek-container { 
             display: flex; 
             align-items: center; 
-            gap: 10px; 
+            gap: 12px; 
             width: 100%;
             padding-top: 2px;
         }
 
         .slider { 
             flex: 1; 
-            height: 3px; 
+            height: 4px; 
             -webkit-appearance: none; 
-            background: rgba(255,255,255,0.15); 
-            border-radius: 2px;
+            background: linear-gradient(to right, var(--gold) 0%, var(--gold) 0%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.15) 100%); 
+            border-radius: 4px;
             outline: none; 
             cursor: pointer; 
+            transition: background 0.1s ease;
         }
         .slider::-webkit-slider-thumb { 
             -webkit-appearance: none; 
-            width: 10px; 
-            height: 10px; 
+            width: 12px; 
+            height: 12px; 
             border-radius: 50%; 
-            background: var(--gold); 
+            background: #ffffff; 
+            box-shadow: 0 0 10px var(--gold);
+            cursor: pointer;
         }
 
         .time-label { 
             font-family: 'JetBrains Mono', monospace; 
-            font-size: 10px; 
-            opacity: 0.6; 
+            font-size: 11px; 
+            font-weight: 500;
+            opacity: 0.75; 
             white-space: nowrap;
             flex-shrink: 0;
+            color: var(--cream);
         }
 
-        /* Animated Buttons Wrapper */
-        .btn-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        /* Animated Bigger Controls */
+        .btn-wrap { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
         
         .nav-btn { 
             background: none; 
             border: none; 
             color: var(--sand); 
             cursor: pointer; 
-            font-size: 15px; 
-            width: 32px;
-            height: 32px;
+            font-size: 16px; 
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -196,24 +225,25 @@
             transform: scale(0.9);
         }
 
+        /* Subtle Larger Play/Pause Button */
         .play-btn { 
             background: var(--cream); 
             color: var(--shade); 
-            width: 42px; 
-            height: 42px; 
+            width: 48px; 
+            height: 48px; 
             border-radius: 50%; 
             border: none; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-size: 15px; 
+            font-size: 18px; 
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, box-shadow 0.3s;
             position: relative;
         }
 
         .play-btn:hover { 
-            transform: scale(1.1); 
+            transform: scale(1.08); 
             background: #ffffff; 
             box-shadow: 0 0 20px rgba(245,245,247,0.4);
         }
@@ -228,7 +258,7 @@
 
         @keyframes pulseGlow {
             0% { box-shadow: 0 0 0px rgba(197, 160, 89, 0); }
-            100% { box-shadow: 0 0 16px rgba(197, 160, 89, 0.6); }
+            100% { box-shadow: 0 0 18px rgba(197, 160, 89, 0.6); }
         }
 
         /* 5. PLAYLIST DRAWER */
@@ -236,14 +266,14 @@
             position: absolute; 
             left: 0; 
             right: 0;
-            bottom: calc(100% + 12px); 
-            max-height: 40vh; 
+            bottom: calc(100% + 14px); 
+            max-height: 42vh; 
             background: var(--glass); 
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255,255,255,0.14); 
             border-radius: 20px; 
-            padding: 16px 18px; 
+            padding: 18px 20px; 
             z-index: 200; 
             display: none; 
             overflow-y: auto;
@@ -256,25 +286,26 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .drawer h3 { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; color: var(--gold); }
-        .list-item { font-size: 12px; padding: 10px 12px; cursor: pointer; border-radius: 8px; opacity: 0.7; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .drawer h3 { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; color: var(--gold); }
+        .list-item { font-size: 13px; padding: 11px 14px; cursor: pointer; border-radius: 8px; opacity: 0.75; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .list-item:hover { background: rgba(255,255,255,0.08); opacity: 1; }
         .list-item.active { color: var(--gold); opacity: 1; font-weight: 700; background: rgba(197, 160, 89, 0.12); }
 
-        /* Responsive Layout Optimization for Mobile Devices */
+        /* Responsive Mobile Adjustments */
         @media (max-width: 480px) {
-            header { padding: 14px 18px; }
-            .hero { margin-top: 2vh; }
-            .hero p { letter-spacing: 0.2em; font-size: 8.5px; }
-            .glass-pill { padding: 12px 14px; gap: 8px; border-radius: 22px; }
-            #artwork { width: 38px; height: 38px; }
-            .track-name { font-size: 12px; }
-            .track-artist { font-size: 10px; }
-            .btn-wrap { gap: 2px; }
-            .nav-btn { width: 28px; height: 28px; font-size: 12px; }
-            .play-btn { width: 36px; height: 36px; font-size: 12px; }
-            .time-label { font-size: 9px; }
-            .drawer { max-height: 35vh; padding: 12px 14px; }
+            header { padding: 16px 20px; }
+            .hero { margin-top: 5vh; }
+            .hero p { letter-spacing: 0.2em; font-size: 9px; }
+            .glass-pill { padding: 14px 16px; gap: 10px; border-radius: 24px; }
+            #artwork { width: 44px; height: 44px; }
+            .track-name { font-size: 14px; }
+            .track-artist { font-size: 11px; }
+            .btn-wrap { gap: 6px; }
+            .nav-btn { width: 32px; height: 32px; font-size: 14px; }
+            .play-btn { width: 42px; height: 42px; font-size: 15px; }
+            .time-label { font-size: 10px; }
+            .list-item { font-size: 12px; padding: 10px; }
+            .drawer { max-height: 38vh; padding: 14px 16px; }
         }
 
         /* Hide YouTube Engine */
@@ -294,7 +325,7 @@
             <div class="dot"></div>
             <span id="status-text">Loading Engine...</span>
         </div>
-        <button onclick="toggleDrawer()" style="background:none; border:1px solid rgba(255,255,255,0.2); color:white; padding:6px 14px; border-radius:99px; font-size:10px; cursor:pointer; letter-spacing:1px;">PLAYLIST</button>
+        <button id="playlist-toggle-btn" class="playlist-btn" onclick="toggleDrawer()">PLAYLIST</button>
     </header>
 
     <main class="hero">
@@ -335,10 +366,10 @@
                 </div>
             </div>
 
-            <!-- Bottom Seek Row: Prevents Overlapping -->
+            <!-- Bottom Seek Row: Dynamic Fill Track Progress -->
             <div class="seek-container">
                 <span class="time-label" id="curr">0:00</span>
-                <input type="range" id="seek" value="0" class="slider">
+                <input type="range" id="seek" value="0" min="0" max="100" class="slider">
                 <span class="time-label" id="total">0:00</span>
             </div>
         </div>
@@ -357,7 +388,7 @@
         let syncTimer = null;
         let playlistTitles = {};
 
-        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard;
+        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn;
 
         document.addEventListener('DOMContentLoaded', () => {
             statusText = document.getElementById('status-text');
@@ -370,16 +401,26 @@
             totalTime = document.getElementById('total');
             artwork = document.getElementById('artwork');
             pillCard = document.getElementById('pill-card');
+            playlistToggleBtn = document.getElementById('playlist-toggle-btn');
 
             seekSlider.addEventListener('input', (e) => {
                 if (player && typeof player.getDuration === 'function') {
                     const dur = player.getDuration();
                     if (dur > 0) {
-                        player.seekTo((e.target.value / 100) * dur);
+                        const val = e.target.value;
+                        player.seekTo((val / 100) * dur);
+                        updateSliderFill(val);
                     }
                 }
             });
         });
+
+        // Updates progress fill background of slider
+        function updateSliderFill(percent) {
+            if (seekSlider) {
+                seekSlider.style.background = `linear-gradient(to right, var(--gold) ${percent}%, rgba(255,255,255,0.15) ${percent}%)`;
+            }
+        }
 
         // Load YouTube IFrame API Script
         const tag = document.createElement('script');
@@ -529,8 +570,10 @@
                 const c = player.getCurrentTime();
                 const d = player.getDuration();
                 if (d > 0) {
-                    if (seekSlider) seekSlider.value = (c / d) * 100;
+                    const percent = (c / d) * 100;
+                    if (seekSlider) seekSlider.value = percent;
                     if (currTime) currTime.textContent = formatTime(c);
+                    updateSliderFill(percent);
                 }
             }
         }
@@ -568,7 +611,17 @@
         function toggleDrawer() {
             const d = document.getElementById('drawer');
             if (d) {
-                d.style.display = d.style.display === 'block' ? 'none' : 'block';
+                const isOpening = d.style.display !== 'block';
+                d.style.display = isOpening ? 'block' : 'none';
+                
+                // Toggle active state styling on Playlist button
+                if (playlistToggleBtn) {
+                    if (isOpening) {
+                        playlistToggleBtn.classList.add('active');
+                    } else {
+                        playlistToggleBtn.classList.remove('active');
+                    }
+                }
             }
         }
     </script>
