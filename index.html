@@ -141,7 +141,6 @@
     .btn-play { background: var(--accent); color: #000; border: none; }
     .btn-play:hover { background: #d97706; }
 
-    /* Compact YouTube Engine Container */
     .engine-wrapper {
       margin-top: 15px;
       border-radius: 8px;
@@ -178,14 +177,12 @@
       <button class="btn" onclick="nextTrack()">⏭</button>
     </div>
 
-    <!-- Active Player Engine -->
     <div class="engine-wrapper">
       <div id="youtube-player"></div>
     </div>
   </div>
 
   <script>
-    // 📍 YOUR PLAYLIST ID
     const PLAYLIST_ID = 'PLTJ1PnzCWyFw';
 
     let player = null;
@@ -197,22 +194,24 @@
     const playBtn = document.getElementById('play-btn');
     const visualizer = document.getElementById('visualizer');
 
-    // 1. Load IFrame API Script
+    // Load API Script
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // 2. Initialize Player without embed/null bug
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('youtube-player', {
         height: '180',
         width: '100%',
+        host: 'https://www.youtube-nocookie.com', // Uses privacy-enhanced domain to bypass Playback ID origin blocks
         playerVars: {
           autoplay: 0,
           controls: 1,
           enablejsapi: 1,
-          rel: 0
+          rel: 0,
+          origin: window.location.origin,
+          widget_referrer: window.location.href
         },
         events: {
           'onReady': onPlayerReady,
@@ -222,11 +221,8 @@
       });
     }
 
-    // 3. Cue playlist explicitly on ready
     function onPlayerReady(event) {
       statusEl.textContent = 'Radio Ready';
-      
-      // Explicitly load playlist via API method
       event.target.cuePlaylist({
         listType: 'playlist',
         list: PLAYLIST_ID,
@@ -235,7 +231,6 @@
       });
     }
 
-    // 4. Handle Play/Pause and track info
     function onPlayerStateChange(event) {
       if (event.data === YT.PlayerState.PLAYING) {
         isPlaying = true;
@@ -256,12 +251,13 @@
       }
     }
 
+    // Auto-recovery for Playback ID or Embed errors
     function onPlayerError(event) {
-      console.warn('Track restricted/unavailable (Code: ' + event.data + '). Skipping...');
-      statusEl.textContent = 'Skipping restricted track...';
+      console.warn('Playback error encountered (Code: ' + event.data + '). Auto-skipping...');
+      statusEl.textContent = 'Playback error. Skipping track...';
       setTimeout(() => {
         nextTrack();
-      }, 500);
+      }, 600);
     }
 
     function updateMetadata() {
@@ -298,18 +294,6 @@
         player.previousVideo();
       }
     }
-
-    // Keyboard Shortcuts
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        togglePlay();
-      } else if (e.code === 'ArrowRight') {
-        nextTrack();
-      } else if (e.code === 'ArrowLeft') {
-        prevTrack();
-      }
-    });
   </script>
 </body>
 </html>
