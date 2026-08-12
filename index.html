@@ -36,7 +36,6 @@
       max-width: 400px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
       text-align: center;
-      position: relative;
     }
 
     .brand {
@@ -88,7 +87,6 @@
       margin-top: 6px;
     }
 
-    /* Animated Retro Visualizer Bars */
     .visualizer {
       display: flex;
       justify-content: center;
@@ -143,29 +141,27 @@
     .btn-play { background: var(--accent); color: #000; border: none; }
     .btn-play:hover { background: #d97706; }
 
-    /* Hidden YouTube Iframe Player */
-    #yt-hidden-engine {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0.01;
-      pointer-events: none;
+    /* Compact YouTube Engine Container */
+    .engine-wrapper {
+      margin-top: 15px;
+      border-radius: 8px;
       overflow: hidden;
-      bottom: 0;
-      right: 0;
+      opacity: 0.3;
+      transition: opacity 0.3s;
     }
+    .engine-wrapper:hover { opacity: 1; }
   </style>
 </head>
 <body>
 
   <div class="radio-card">
     <div class="brand">📻 Santali Retro</div>
-    <div class="sub-brand">100% Reliable Audio Engine</div>
+    <div class="sub-brand">Classic Music Streamer</div>
 
     <div class="display-screen">
-      <div class="status" id="status">Connecting Engine...</div>
-      <div class="song-title" id="song-title">Santali Melodies</div>
-      <div class="artist-name" id="artist-name">YouTube Music Playlist</div>
+      <div class="status" id="status">Loading Engine...</div>
+      <div class="song-title" id="song-title">Santali Retro Radio</div>
+      <div class="artist-name" id="artist-name">Click ▶ PLAY to start</div>
 
       <div class="visualizer" id="visualizer">
         <div class="bar"></div>
@@ -182,14 +178,14 @@
       <button class="btn" onclick="nextTrack()">⏭</button>
     </div>
 
-    <!-- The underlying engine powering your custom UI -->
-    <div id="yt-hidden-engine">
+    <!-- Active Player Engine -->
+    <div class="engine-wrapper">
       <div id="youtube-player"></div>
     </div>
   </div>
 
   <script>
-    // 📍 YOUR YOUTUBE MUSIC PLAYLIST ID
+    // 📍 YOUR PLAYLIST ID
     const PLAYLIST_ID = 'PLTJ1PnzCWyFw';
 
     let player = null;
@@ -201,24 +197,22 @@
     const playBtn = document.getElementById('play-btn');
     const visualizer = document.getElementById('visualizer');
 
-    // 1. Asynchronously load YouTube Iframe API
+    // 1. Load IFrame API Script
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // 2. Initialize YouTube Player engine once script loads
+    // 2. Initialize Player without embed/null bug
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('youtube-player', {
-        height: '200',
-        width: '200',
-        host: 'https://www.youtube.com',
+        height: '180',
+        width: '100%',
         playerVars: {
-          listType: 'playlist',
-          list: PLAYLIST_ID,
           autoplay: 0,
-          controls: 0,
-          enablejsapi: 1
+          controls: 1,
+          enablejsapi: 1,
+          rel: 0
         },
         events: {
           'onReady': onPlayerReady,
@@ -228,14 +222,21 @@
       });
     }
 
-    // 3. Handlers
+    // 3. Cue playlist explicitly on ready
     function onPlayerReady(event) {
       statusEl.textContent = 'Radio Ready';
-      updateMetadata();
+      
+      // Explicitly load playlist via API method
+      event.target.cuePlaylist({
+        listType: 'playlist',
+        list: PLAYLIST_ID,
+        index: 0,
+        startSeconds: 0
+      });
     }
 
+    // 4. Handle Play/Pause and track info
     function onPlayerStateChange(event) {
-      // YT.PlayerState: PLAYING (1), PAUSED (2), BUFFERING (3), ENDED (0)
       if (event.data === YT.PlayerState.PLAYING) {
         isPlaying = true;
         playBtn.textContent = '⏸ PAUSE';
@@ -249,12 +250,14 @@
         visualizer.classList.remove('playing');
       } else if (event.data === YT.PlayerState.BUFFERING) {
         statusEl.textContent = 'Buffering...';
+      } else if (event.data === YT.PlayerState.CUED) {
+        statusEl.textContent = 'Click ▶ PLAY';
+        updateMetadata();
       }
     }
 
-    // Catch restricted/deleted tracks and automatically jump to next
     function onPlayerError(event) {
-      console.warn('Track restricted or unplayable (Code: ' + event.data + '). Auto-skipping...');
+      console.warn('Track restricted/unavailable (Code: ' + event.data + '). Skipping...');
       statusEl.textContent = 'Skipping restricted track...';
       setTimeout(() => {
         nextTrack();
