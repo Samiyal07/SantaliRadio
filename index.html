@@ -16,8 +16,9 @@
             --live: #22c55e;
             --shade: #0c0c0c;
             --gold: #C5A059;
-            --glass: rgba(18, 16, 14, 0.82);
-            --glass-border: rgba(255, 255, 255, 0.12);
+            /* Lighter Glass Tokens */
+            --glass: rgba(18, 16, 14, 0.70);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,17 +39,16 @@
             flex-direction: column;
         }
 
-        /* 1. LOCKED & CONSISTENT FIXED BACKGROUND (PREVENTS ZOOM/RESIZE ON SCROLL) */
+        /* 1. STATIC BACKDROP */
         .fixed-backdrop { 
             position: fixed; 
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100vw;
             height: 100vh;
             z-index: -1; 
             pointer-events: none; 
             overflow: hidden;
-            transform: translateZ(0); /* Hardware acceleration lock */
+            transform: translate3d(0, 0, 0);
         }
         
         .backdrop-img {
@@ -58,7 +58,7 @@
             background-image: url('desktop_bg.png');
             background-size: cover; 
             background-position: center;
-            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         /* Mobile Background Switch */
@@ -79,11 +79,11 @@
         .dot::after { content: ''; position: absolute; inset: 0; background: var(--live); border-radius: 50%; animation: ping 1.5s infinite; }
         @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
 
-        /* Subtle Reduced Glass Playlist Button */
+        /* Subtle Playlist Button */
         .playlist-btn {
             background: var(--glass); 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border); 
             color: white; 
             padding: 8px 18px; 
@@ -92,7 +92,7 @@
             font-weight: 600;
             cursor: pointer; 
             letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.25s ease;
         }
         .playlist-btn:hover {
@@ -129,7 +129,7 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
-        /* 4. FLOATING PLAYER CONTAINER (REDUCED SUBTLE GLASS) */
+        /* 4. FLOATING PLAYER CONTAINER (LIGHTER GLASS) */
         .player-bar {
             position: fixed; 
             bottom: max(20px, env(safe-area-inset-bottom)); 
@@ -141,15 +141,15 @@
 
         .glass-pill {
             background: var(--glass); 
-            backdrop-filter: blur(18px); 
-            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border); 
             border-radius: 28px;
             padding: 16px 22px; 
             display: flex; 
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
         }
 
         .player-row-top {
@@ -293,7 +293,7 @@
             100% { box-shadow: 0 0 16px rgba(197, 160, 89, 0.5); }
         }
 
-        /* 5. MATCHING SCREENSHOT QUEUE DRAWER DESIGN */
+        /* 5. LIVE QUEUE DRAWER */
         .drawer {
             position: absolute; 
             left: 0; 
@@ -301,15 +301,15 @@
             bottom: calc(100% + 14px); 
             max-height: 44vh; 
             background: var(--glass); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border); 
             border-radius: 20px; 
             padding: 16px 18px; 
             z-index: 200; 
             display: none; 
             overflow: hidden;
-            box-shadow: 0 -15px 35px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -364,7 +364,6 @@
             border-radius: 4px;
         }
 
-        /* Match Screenshot Queue Rows */
         .list-item { 
             display: flex;
             align-items: center;
@@ -445,8 +444,8 @@
             margin-top: 100vh;
             padding: 40px 20px 140px;
             background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-top: 1px solid var(--glass-border);
             position: relative;
             z-index: 20;
@@ -518,7 +517,7 @@
 </head>
 <body>
 
-    <!-- Locked Backdrop (Fixed Scale on Scroll) -->
+    <!-- Frozen Backdrop Layer -->
     <div class="fixed-backdrop">
         <div class="backdrop-img"></div>
     </div>
@@ -539,7 +538,7 @@
         <p>Santali Retro · Those Were the days</p>
     </main>
 
-    <!-- Footer Below Initial Viewport -->
+    <!-- Footer Below Viewport -->
     <footer>
         <div class="footer-content">
             <p>All songs played here are embedded directly from YouTube. We do not host or store any audio or video files on our servers.</p>
@@ -550,7 +549,7 @@
     <!-- Floating Player Bar Container -->
     <div class="player-bar" id="player-bar">
         
-        <!-- Live Queue Drawer Positioned Directly Above -->
+        <!-- Live Queue Drawer -->
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <h3 id="queue-count-header">PLAYLIST QUEUE</h3>
@@ -562,7 +561,7 @@
         <div class="glass-pill" id="pill-card">
             <!-- Top Controls Row -->
             <div class="player-row-top">
-                <img id="artwork" src="ChatGPT Image Aug 13, 2026, 02_43_58 AM.png" alt="Artwork"/>
+                <img id="artwork" src="desktop_bg.png" alt="Artwork"/>
                 
                 <div class="track-meta">
                     <div class="marquee-container" id="marquee-box">
