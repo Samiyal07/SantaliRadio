@@ -1,330 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📻 Santali Retro Radio</title>
-  <style>
-    :root {
-      --bg: #141210;
-      --card-bg: #221d19;
-      --accent: #f59e0b;
-      --text: #f5f5f4;
-      --text-dim: #a8a29e;
-      --border: #44382e;
-    }
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Jharna Are — Santali Ambient Radio</title>
+    
+    <!-- Fonts & Icons from Deluxe Saloon -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@500;700;800&family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    <style>
+        :root {
+            --cream: #f5f5f7;
+            --sand: #d1d1d1;
+            --live: #22c55e;
+            --shade: #0c0c0c;
+            --gold: #C5A059;
+            --glass: rgba(12, 12, 12, 0.85);
+        }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    .radio-card {
-      background: var(--card-bg);
-      border: 3px solid var(--border);
-      border-radius: 20px;
-      padding: 24px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-      text-align: center;
-    }
+        body {
+            font-family: 'Familjen Grotesk', sans-serif;
+            background-color: var(--shade);
+            color: var(--sand);
+            height: 100dvh;
+            overflow: hidden;
+        }
 
-    .brand {
-      color: var(--accent);
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
+        /* 1. BACKDROP & RETRO TEXTURE */
+        .fixed-backdrop { position: fixed; inset: 0; z-index: -1; }
+        .backdrop-img {
+            width: 100%; height: 100%; object-fit: cover;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.alphacoders.com/132/1327111.png');
+            background-size: cover; background-position: center;
+        }
+        .saloon-vignette { position: absolute; inset: 0; background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.4) 80%, var(--shade) 100%); }
+        .saloon-grain { position: absolute; inset: 0; background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.1; pointer-events: none; }
 
-    .sub-brand {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      margin-bottom: 20px;
-    }
+        /* 2. HEADER & LIVE DOT */
+        header {
+            position: relative; z-index: 20;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 24px 32px;
+        }
+        .status { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
+        .dot { width: 8px; height: 8px; background: var(--live); border-radius: 50%; position: relative; }
+        .dot::after { content: ''; position: absolute; inset: 0; background: var(--live); border-radius: 50%; animation: ping 1.5s infinite; }
+        @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
 
-    .display-screen {
-      background: #0f0d0b;
-      border: 2px solid #2f2720;
-      border-radius: 12px;
-      padding: 20px 16px;
-      margin-bottom: 20px;
-    }
+        /* 3. HERO TITLES */
+        .hero { text-align: center; margin-top: 6vh; }
+        .hero h1 {
+            font-family: 'Anek Devanagari', sans-serif;
+            font-size: clamp(3.5rem, 15vw, 9.5rem);
+            line-height: 0.85; color: var(--cream);
+            filter: drop-shadow(0 15px 40px rgba(0,0,0,0.8));
+        }
+        .hero p { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.5em; text-transform: uppercase; margin-top: 25px; color: rgba(245,245,247,0.5); }
 
-    .status {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
+        /* 4. FLOATING PLAYER BAR */
+        .player-bar {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 620px; z-index: 100;
+        }
+        .glass-pill {
+            background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 999px;
+            padding: 14px 24px; display: flex; align-items: center; gap: 18px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+        #artwork { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.1); }
+        .track-meta { flex: 1; min-width: 0; }
+        .track-name { font-size: 14px; font-weight: 600; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-artist { font-size: 11px; color: var(--sand); opacity: 0.5; margin-top: 2px; }
 
-    .song-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      min-height: 2.8em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text);
-      line-height: 1.4;
-    }
+        .seek-container { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+        .slider { flex: 1; height: 2px; -webkit-appearance: none; background: rgba(255,255,255,0.1); outline: none; cursor: pointer; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+        .time-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; opacity: 0.4; }
 
-    .artist-name {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      margin-top: 6px;
-    }
+        .btn-wrap { display: flex; align-items: center; gap: 14px; }
+        .nav-btn { background: none; border: none; color: var(--sand); cursor: pointer; font-size: 15px; transition: 0.3s; }
+        .nav-btn:hover { color: var(--cream); }
+        .play-btn { 
+            background: var(--cream); color: var(--shade); 
+            width: 44px; height: 44px; border-radius: 50%; 
+            border: none; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; font-size: 16px; 
+            transition: 0.2s;
+        }
+        .play-btn:hover { transform: scale(1.05); background: #ffffff; }
 
-    .visualizer {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 4px;
-      height: 24px;
-      margin-top: 14px;
-    }
+        /* 5. PLAYLIST DRAWER */
+        .drawer {
+            position: fixed; right: 30px; bottom: 120px; width: 280px; 
+            max-height: 40vh; background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; 
+            padding: 20px; z-index: 90; display: none; overflow-y: auto;
+        }
+        .drawer h3 { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; color: var(--gold); }
+        .list-item { font-size: 12px; padding: 10px; cursor: pointer; border-radius: 6px; opacity: 0.6; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .list-item:hover { background: rgba(255,255,255,0.05); opacity: 1; }
+        .list-item.active { color: var(--gold); opacity: 1; font-weight: 700; }
 
-    .bar {
-      width: 4px;
-      background: var(--accent);
-      border-radius: 2px;
-      height: 4px;
-      transition: height 0.2s;
-    }
-
-    .playing .bar {
-      animation: pulse 0.8s infinite alternate ease-in-out;
-    }
-
-    .playing .bar:nth-child(2) { animation-delay: 0.2s; }
-    .playing .bar:nth-child(3) { animation-delay: 0.4s; }
-    .playing .bar:nth-child(4) { animation-delay: 0.1s; }
-    .playing .bar:nth-child(5) { animation-delay: 0.3s; }
-
-    @keyframes pulse {
-      0% { height: 4px; }
-      100% { height: 22px; }
-    }
-
-    .controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .btn {
-      background: #2f2720;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 14px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 1.1rem;
-      flex: 1;
-      transition: all 0.2s;
-    }
-
-    .btn:hover { background: #44382e; border-color: var(--accent); }
-    .btn-play { background: var(--accent); color: #000; border: none; }
-    .btn-play:hover { background: #d97706; }
-
-    .engine-wrapper {
-      margin-top: 15px;
-      border-radius: 8px;
-      overflow: hidden;
-      opacity: 0.3;
-      transition: opacity 0.3s;
-    }
-    .engine-wrapper:hover { opacity: 1; }
-  </style>
+        /* Hide YouTube Engine */
+        #player-hideout { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    </style>
 </head>
 <body>
 
-  <div class="radio-card">
-    <div class="brand">📻 Jharna Radio</div>
-    <div class="sub-brand">Classic Santali Music</div>
-
-    <div class="display-screen">
-      <div class="status" id="status">Loading Engine...</div>
-      <div class="song-title" id="song-title">Santali Retro Radio</div>
-      <div class="artist-name" id="artist-name">Click ▶ PLAY to start</div>
-
-      <div class="visualizer" id="visualizer">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-      </div>
+    <div class="fixed-backdrop">
+        <div class="backdrop-img"></div>
+        <div class="saloon-vignette"></div>
+        <div class="saloon-grain"></div>
     </div>
 
-    <div class="controls">
-      <button class="btn" onclick="prevTrack()">⏮</button>
-      <button class="btn btn-play" id="play-btn" onclick="togglePlay()">▶ PLAY</button>
-      <button class="btn" onclick="nextTrack()">⏭</button>
+    <header>
+        <div class="status">
+            <div class="dot"></div>
+            <span id="status-text">Loading Engine...</span>
+        </div>
+        <button onclick="toggleDrawer()" style="background:none; border:1px solid rgba(255,255,255,0.2); color:white; padding:6px 16px; border-radius:99px; font-size:10px; cursor:pointer; letter-spacing:1px;">PLAYLIST</button>
+    </header>
+
+    <div class="drawer" id="drawer">
+        <h3>Live Queue</h3>
+        <div id="song-list"></div>
     </div>
 
-    <div class="engine-wrapper">
-      <div id="youtube-player"></div>
+    <main class="hero">
+        <h1>
+            <span style="display: block;">झरना</span>
+            <span style="display: block;">आरे</span>
+        </h1>
+        <p>Jharna Are · open all hours</p>
+    </main>
+
+    <div class="player-bar">
+        <div class="glass-pill">
+            <img id="artwork" src="https://images.alphacoders.com/132/1327111.png" alt="Artwork"/>
+            
+            <div class="track-meta">
+                <p id="song-title" class="track-name">Santali Retro Radio</p>
+                <p id="artist-name" class="track-artist">Click ▶ PLAY to start</p>
+                
+                <div class="seek-container">
+                    <input type="range" id="seek" value="0" class="slider">
+                    <span class="time-label"><span id="curr">0:00</span> / <span id="total">0:00</span></span>
+                </div>
+            </div>
+
+            <div class="btn-wrap">
+                <button class="nav-btn" onclick="prevTrack()"><i class="fas fa-backward"></i></button>
+                <button class="play-btn" onclick="togglePlay()"><i id="play-icon" class="fas fa-play"></i></button>
+                <button class="nav-btn" onclick="nextTrack()"><i class="fas fa-forward"></i></button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    // 📍 REPLACE WITH A VALID PUBLIC YOUTUBE PLAYLIST ID
-    const PLAYLIST_ID = 'PLMUmShcrNXVE';
+    <!-- Hidden Player Engine -->
+    <div id="player-hideout">
+        <div id="youtube-player"></div>
+    </div>
 
-    let player = null;
-    let isPlaying = false;
+    <script>
+        const PLAYLIST_ID = 'PLTJ1PnzCWyFw';
 
-    const statusEl = document.getElementById('status');
-    const titleEl = document.getElementById('song-title');
-    const artistEl = document.getElementById('artist-name');
-    const playBtn = document.getElementById('play-btn');
-    const visualizer = document.getElementById('visualizer');
+        let player = null;
+        let isPlaying = false;
+        let syncTimer = null;
 
-    // 1. Load API Script
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        let statusText, titleEl, artistEl, playIcon, seekSlider, currTime, totalTime, artwork;
 
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('youtube-player', {
-        height: '180',
-        width: '100%',
-        host: 'https://www.youtube.com',
-        playerVars: {
-          autoplay: 0,
-          controls: 1,
-          enablejsapi: 1,
-          rel: 0
-        },
-        events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange,
-          'onError': onPlayerError
-        }
-      });
-    }
+        document.addEventListener('DOMContentLoaded', () => {
+            statusText = document.getElementById('status-text');
+            titleEl = document.getElementById('song-title');
+            artistEl = document.getElementById('artist-name');
+            playIcon = document.getElementById('play-icon');
+            seekSlider = document.getElementById('seek');
+            currTime = document.getElementById('curr');
+            totalTime = document.getElementById('total');
+            artwork = document.getElementById('artwork');
 
-    function onPlayerReady(event) {
-      statusEl.textContent = 'Radio Ready';
-      
-      // Load playlist via IFrame API
-      try {
-        event.target.cuePlaylist({
-          listType: 'playlist',
-          list: PLAYLIST_ID,
-          index: 0,
-          startSeconds: 0
+            seekSlider.addEventListener('input', (e) => {
+                if (player && typeof player.getDuration === 'function') {
+                    const dur = player.getDuration();
+                    if (dur > 0) {
+                        player.seekTo((e.target.value / 100) * dur);
+                    }
+                }
+            });
         });
-      } catch(e) {
-        console.error('Playlist cue failed:', e);
-      }
-    }
 
-    function onPlayerStateChange(event) {
-      if (event.data === YT.PlayerState.PLAYING) {
-        isPlaying = true;
-        playBtn.textContent = '⏸ PAUSE';
-        statusEl.textContent = 'Now Playing';
-        visualizer.classList.add('playing');
-        updateMetadata();
-      } else if (event.data === YT.PlayerState.PAUSED) {
-        isPlaying = false;
-        playBtn.textContent = '▶ PLAY';
-        statusEl.textContent = 'Paused';
-        visualizer.classList.remove('playing');
-      } else if (event.data === YT.PlayerState.BUFFERING) {
-        statusEl.textContent = 'Buffering...';
-      } else if (event.data === YT.PlayerState.CUED) {
-        statusEl.textContent = 'Click ▶ PLAY';
-        updateMetadata();
-      }
-    }
+        // 1. Load IFrame API Script
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    function onPlayerError(event) {
-      console.warn('Playback error (Code: ' + event.data + '). Auto-skipping...');
-      if (event.data === 2) {
-        statusEl.textContent = 'Invalid Playlist ID!';
-      } else {
-        statusEl.textContent = 'Skipping track...';
-        setTimeout(() => nextTrack(), 600);
-      }
-    }
-
-    function updateMetadata() {
-      try {
-        if (player && typeof player.getVideoData === 'function') {
-          const data = player.getVideoData();
-          if (data && data.title) {
-            titleEl.textContent = data.title;
-            artistEl.textContent = data.author || 'Santali Artist';
-          }
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '180',
+                width: '100%',
+                host: 'https://www.youtube.com',
+                playerVars: {
+                    autoplay: 0,
+                    controls: 1,
+                    enablejsapi: 1,
+                    rel: 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
         }
-      } catch (e) {}
-    }
 
-    function togglePlay() {
-      if (!player) return;
-      if (isPlaying) {
-        player.pauseVideo();
-      } else {
-        player.playVideo();
-      }
-    }
+        function onPlayerReady(event) {
+            if (statusText) statusText.textContent = 'Radio Ready';
+            
+            try {
+                event.target.cuePlaylist({
+                    listType: 'playlist',
+                    list: PLAYLIST_ID,
+                    index: 0,
+                    startSeconds: 0
+                });
+            } catch(e) {
+                console.error('Playlist cue failed:', e);
+            }
 
-    function nextTrack() {
-      if (player && typeof player.nextVideo === 'function') {
-        statusEl.textContent = 'Loading Next...';
-        player.nextVideo();
-      }
-    }
-
-    function prevTrack() {
-      if (player && typeof player.previousVideo === 'function') {
-        statusEl.textContent = 'Loading Prev...';
-        player.previousVideo();
-      }
-    }
-    function updateMetadata() {
-  try {
-    if (player && typeof player.getVideoData === 'function') {
-      const data = player.getVideoData();
-      if (data && data.title) {
-        titleEl.textContent = data.title;
-        artistEl.textContent = data.author || 'Santali Artist';
-
-        // 📱 Lock Screen & Notification Center Media Controls
-        if ('mediaSession' in navigator) {
-          navigator.mediaSession.metadata = new MediaMetadata({
-            title: data.title,
-            artist: data.author || 'Santali Artist',
-            album: 'Santali Retro Radio'
-          });
-
-          navigator.mediaSession.setActionHandler('play', () => togglePlay());
-          navigator.mediaSession.setActionHandler('pause', () => togglePlay());
-          navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
-          navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
+            if (!syncTimer) {
+                syncTimer = setInterval(syncProgress, 1000);
+            }
         }
-      }
-    }
-  } catch (e) {}
-}
-  </script>
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                isPlaying = true;
+                if (playIcon) playIcon.className = 'fas fa-pause';
+                if (statusText) statusText.textContent = 'Now Playing';
+                updateMetadata();
+            } else if (event.data === YT.PlayerState.PAUSED) {
+                isPlaying = false;
+                if (playIcon) playIcon.className = 'fas fa-play';
+                if (statusText) statusText.textContent = 'Paused';
+            } else if (event.data === YT.PlayerState.BUFFERING) {
+                if (statusText) statusText.textContent = 'Buffering...';
+            } else if (event.data === YT.PlayerState.CUED) {
+                if (statusText) statusText.textContent = 'On Air — Santali Radio';
+                updateMetadata();
+                renderQueue();
+            } else if (event.data === YT.PlayerState.ENDED) {
+                nextTrack();
+            }
+        }
+
+        function onPlayerError(event) {
+            console.warn('Playback error (Code: ' + event.data + '). Auto-skipping...');
+            if (event.data === 2) {
+                if (statusText) statusText.textContent = 'Invalid Playlist ID!';
+            } else {
+                if (statusText) statusText.textContent = 'Skipping track...';
+                setTimeout(() => nextTrack(), 600);
+            }
+        }
+
+        function updateMetadata() {
+            try {
+                if (player && typeof player.getVideoData === 'function') {
+                    const data = player.getVideoData();
+                    if (data && data.title) {
+                        if (titleEl) titleEl.textContent = data.title;
+                        if (artistEl) artistEl.textContent = data.author || 'Santali Artist';
+
+                        const videoUrl = player.getVideoUrl();
+                        if (videoUrl && videoUrl.includes('v=')) {
+                            const vId = videoUrl.split('v=')[1].split('&')[0];
+                            if (artwork) artwork.src = `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
+                        }
+
+                        if (totalTime) totalTime.textContent = formatTime(player.getDuration());
+
+                        // Highlight drawer active item
+                        const idx = player.getPlaylistIndex();
+                        document.querySelectorAll('.list-item').forEach((item, i) => {
+                            item.className = i === idx ? 'list-item active' : 'list-item';
+                        });
+                    }
+                }
+            } catch (e) {}
+        }
+
+        function renderQueue() {
+            if (!player || typeof player.getPlaylist !== 'function') return;
+            const list = player.getPlaylist();
+            const container = document.getElementById('song-list');
+            if (list && Array.isArray(list) && container) {
+                container.innerHTML = list.map((id, i) => 
+                    `<div class="list-item" onclick="player.playVideoAt(${i})">Track ${i + 1}</div>`
+                ).join('');
+            }
+        }
+
+        function syncProgress() {
+            if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === 1) {
+                const c = player.getCurrentTime();
+                const d = player.getDuration();
+                if (d > 0) {
+                    if (seekSlider) seekSlider.value = (c / d) * 100;
+                    if (currTime) currTime.textContent = formatTime(c);
+                }
+            }
+        }
+
+        function formatTime(s) {
+            if (!s || isNaN(s)) return '0:00';
+            let m = Math.floor(s / 60);
+            let sec = Math.floor(s % 60);
+            return `${m}:${sec < 10 ? '0' + sec : sec}`;
+        }
+
+        function togglePlay() {
+            if (!player) return;
+            if (isPlaying) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        }
+
+        function nextTrack() {
+            if (player && typeof player.nextVideo === 'function') {
+                if (statusText) statusText.textContent = 'Loading Next...';
+                player.nextVideo();
+            }
+        }
+
+        function prevTrack() {
+            if (player && typeof player.previousVideo === 'function') {
+                if (statusText) statusText.textContent = 'Loading Prev...';
+                player.previousVideo();
+            }
+        }
+
+        function toggleDrawer() {
+            const d = document.getElementById('drawer');
+            if (d) {
+                d.style.display = d.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+    </script>
 </body>
 </html>
