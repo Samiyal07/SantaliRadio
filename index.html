@@ -22,7 +22,6 @@
             --gold: #C5A059;
             --glass: rgba(18, 16, 14, 0.70);
             --glass-border: rgba(255, 255, 255, 0.08);
-            /* Apple SF Pro System Font Stack */
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
@@ -146,7 +145,6 @@
             font-weight: 800;
         }
 
-        /* Floating word animation lines */
         .title-line {
             display: block;
             animation: floatLine 6s ease-in-out infinite alternate;
@@ -190,7 +188,6 @@
             to { opacity: 0.85; transform: translateY(0); }
         }
 
-        /* Colorful Instagram Profile Link */
         .insta-link {
             display: inline-flex;
             align-items: center;
@@ -453,7 +450,7 @@
             cursor: pointer;
         }
 
-        /* LIVE QUEUE DRAWER (FIXED SCROLL & LAST TRACK VISIBILITY) */
+        /* LIVE QUEUE DRAWER */
         .drawer {
             position: absolute; 
             left: 0; 
@@ -515,7 +512,7 @@
             max-height: calc(52vh - 65px);
             overflow-y: auto;
             padding-right: 4px;
-            padding-bottom: 24px; /* Essential bottom clearance for last song */
+            padding-bottom: 24px;
         }
 
         .queue-scroll-container::-webkit-scrollbar {
@@ -701,7 +698,16 @@
             .footer-title { font-size: 1.3rem; }
         }
 
-        #player-hideout { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+        /* Un-throttled Offscreen YouTube Player Container */
+        #player-hideout { 
+            position: fixed; 
+            left: -9999px; 
+            top: -9999px; 
+            width: 1px; 
+            height: 1px; 
+            opacity: 0.01; 
+            pointer-events: none; 
+        }
     </style>
 </head>
 <body>
@@ -733,7 +739,7 @@
         </a>
     </main>
 
-    <!-- Footer Below Viewport with Larger Logo Attributes -->
+    <!-- Footer Below Viewport -->
     <footer>
         <div class="footer-content">
             <div class="footer-brand">
@@ -850,16 +856,18 @@
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
-                height: '180',
+                height: '100%',
                 width: '100%',
                 host: 'https://www.youtube.com',
                 playerVars: {
                     autoplay: 0,
-                    controls: 1,
+                    controls: 0,
                     enablejsapi: 1,
                     rel: 0,
                     loop: 1,
-                    playlist: PLAYLIST_ID
+                    playlist: PLAYLIST_ID,
+                    playsinline: 1,
+                    origin: window.location.origin
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -954,7 +962,6 @@
                         document.querySelectorAll('.list-item').forEach((item, i) => {
                             if (i === idx) {
                                 item.className = 'list-item active';
-                                // Automatic smooth scroll to active track in queue drawer
                                 item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                             } else {
                                 item.className = 'list-item';
@@ -1071,7 +1078,6 @@
                 const playlist = player.getPlaylist();
                 const totalTracks = playlist ? playlist.length : 0;
                 
-                // If clicking next on the last song, loop to song #1
                 if (currIdx >= totalTracks - 1) {
                     if (statusText) statusText.textContent = 'Looping to Start...';
                     player.playVideoAt(0);
@@ -1098,7 +1104,6 @@
                 if (playlistToggleBtn) {
                     if (isOpening) {
                         playlistToggleBtn.classList.add('active');
-                        // Ensure active track is scrolled into view when opening
                         const activeIdx = player ? player.getPlaylistIndex() : 0;
                         const activeItem = document.getElementById(`queue-item-${activeIdx}`);
                         if (activeItem) activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
