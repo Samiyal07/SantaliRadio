@@ -921,7 +921,7 @@
                 if (pillCard) pillCard.classList.remove('playing');
                 if (statusText) statusText.textContent = 'Paused';
             } else if (event.data === YT.PlayerState.BUFFERING) {
-                if (statusText) statusText.textContent = 'Buffering / Loading...';
+                if (statusText) statusText.textContent = 'Buffering...';
             } else if (event.data === YT.PlayerState.CUED) {
                 if (statusText) statusText.textContent = 'On Air — Santali Radio';
                 updateMetadata();
@@ -941,7 +941,6 @@
             const currIdx = player && typeof player.getPlaylistIndex === 'function' ? player.getPlaylistIndex() : 0;
             console.warn('Playback network warning (Code: ' + event.data + '). Retrying...');
 
-            // If network is slow, give current track time to load instead of instantly skipping
             if (loadRetryCount < MAX_LOAD_RETRIES) {
                 loadRetryCount++;
                 if (statusText) statusText.textContent = `Connecting (${loadRetryCount}/${MAX_LOAD_RETRIES})...`;
@@ -951,7 +950,6 @@
                     }
                 }, 3000);
             } else {
-                // If max retries reached and it's not track 0, skip to next unblocked song & sync UI meta
                 loadRetryCount = 0;
                 if (currIdx > 0) {
                     if (statusText) statusText.textContent = 'Unplayable song, skipping...';
@@ -978,9 +976,13 @@
                         
                         if (artistEl) artistEl.textContent = data.author || 'Santali Artist';
 
-                        // Set status to ON AIR / READY if loaded but not actively playing
-                        if (statusText && !isPlaying && statusText.textContent.includes('Loading')) {
-                            statusText.textContent = 'On Air — Santali Radio';
+                        // Check status text: if audio is actively playing, ensure it shows "Now Playing", otherwise keep "On Air"
+                        if (statusText) {
+                            if (isPlaying) {
+                                statusText.textContent = 'Now Playing';
+                            } else if (statusText.textContent.includes('Loading') || statusText.textContent.includes('Buffering')) {
+                                statusText.textContent = 'On Air — Santali Radio';
+                            }
                         }
 
                         const videoUrl = player.getVideoUrl();
@@ -1081,6 +1083,11 @@
                     if (seekSlider) seekSlider.value = percent;
                     if (currTime) currTime.textContent = formatTime(c);
                     updateSliderFill(percent);
+
+                    // Ensure status correctly reflects "Now Playing" as time advances
+                    if (statusText && (statusText.textContent.includes('Buffering') || statusText.textContent.includes('Loading'))) {
+                        statusText.textContent = 'Now Playing';
+                    }
 
                     const activeIdx = player.getPlaylistIndex();
                     const activeDurEl = document.getElementById(`q-dur-${activeIdx}`);
