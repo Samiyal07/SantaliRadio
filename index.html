@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <title>Jharna Are — Santali Ambient Radio</title>
     
-    <!-- Favicon (Multi-browser SVG Support) -->
-    <link rel="icon" type="image/svg+xml" href="logo.svg?v=4" sizes="32x32 16x16"/>
+    <!-- Favicon (Full Edge-to-Edge SVG Favicon) -->
+    <link rel="icon" type="image/svg+xml" href="logo.svg?v=5" sizes="any"/>
     <link rel="apple-touch-icon" href="logo.svg?v=4"/>
 
     <!-- Fonts & Icons -->
@@ -22,6 +22,8 @@
             --gold: #C5A059;
             --glass: rgba(18, 16, 14, 0.70);
             --glass-border: rgba(255, 255, 255, 0.08);
+            /* Apple SF Pro System Font Stack */
+            --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,7 +33,9 @@
         }
 
         body {
-            font-family: 'Familjen Grotesk', sans-serif;
+            font-family: var(--apple-font);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             background-color: var(--shade);
             color: var(--sand);
             min-height: 100vh;
@@ -40,6 +44,7 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            letter-spacing: -0.01em;
         }
 
         /* STATIC BACKDROP */
@@ -76,7 +81,16 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 24px;
         }
-        .status { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .status { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.15em; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
+        }
         .dot { width: 8px; height: 8px; background: var(--live); border-radius: 50%; position: relative; }
         .dot::after { content: ''; position: absolute; inset: 0; background: var(--live); border-radius: 50%; animation: ping 1.5s infinite; }
         @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
@@ -92,9 +106,10 @@
             font-size: 11px; 
             font-weight: 600;
             cursor: pointer; 
-            letter-spacing: 1px;
+            letter-spacing: 0.1em;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: var(--apple-font);
         }
         .playlist-btn:hover {
             border-color: var(--gold);
@@ -123,11 +138,12 @@
         }
 
         .hero h1 {
-            font-family: 'Anek Devanagari', sans-serif;
+            font-family: 'Anek Devanagari', var(--apple-font);
             font-size: clamp(2.7rem, 11vw, 6rem);
             line-height: 0.88; 
             color: var(--cream);
             user-select: none;
+            font-weight: 800;
         }
 
         /* Floating word animation lines */
@@ -180,7 +196,7 @@
             align-items: center;
             gap: 8px;
             margin-top: 14px;
-            color: var(--sand);
+            color: #dc2743;
             text-decoration: none;
             font-size: 12px;
             font-family: 'JetBrains Mono', monospace;
@@ -285,8 +301,8 @@
             100% { transform: translateX(-50%); }
         }
 
-        .track-name { font-size: 15px; font-weight: 600; color: var(--cream); }
-        .track-artist { font-size: 12px; color: var(--sand); opacity: 0.65; margin-top: 3px; }
+        .track-name { font-size: 15px; font-weight: 600; color: var(--cream); letter-spacing: -0.01em; }
+        .track-artist { font-size: 12px; color: var(--sand); opacity: 0.65; margin-top: 3px; font-weight: 400; }
 
         .seek-container { 
             display: flex; 
@@ -449,7 +465,7 @@
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid var(--glass-border); 
             border-radius: 20px; 
-            padding: 16px 18px 12px; 
+            padding: 16px 18px 8px; 
             z-index: 200; 
             display: none; 
             overflow: hidden;
@@ -473,7 +489,7 @@
 
         .drawer-header h3 {
             font-size: 11px;
-            letter-spacing: 2px;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
             color: rgba(245, 245, 247, 0.6);
             font-weight: 700;
@@ -496,10 +512,10 @@
         }
 
         .queue-scroll-container {
-            max-height: calc(52vh - 60px);
+            max-height: calc(52vh - 65px);
             overflow-y: auto;
             padding-right: 4px;
-            padding-bottom: 16px; /* Essential bottom clearance for last song */
+            padding-bottom: 24px; /* Essential bottom clearance for last song */
         }
 
         .queue-scroll-container::-webkit-scrollbar {
@@ -539,6 +555,7 @@
             width: 18px;
             text-align: center;
             flex-shrink: 0;
+            font-family: var(--apple-font);
         }
 
         .list-item.active .track-num {
@@ -558,6 +575,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             line-height: 1.25;
+            letter-spacing: -0.01em;
         }
 
         .list-item.active .track-info .q-title {
@@ -571,6 +589,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            font-weight: 400;
         }
 
         .q-duration {
@@ -589,7 +608,7 @@
         footer {
             width: 100%;
             margin-top: 100vh;
-            padding: 40px 20px 140px;
+            padding: 40px 20px 150px;
             background: var(--glass);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -620,19 +639,21 @@
         }
 
         .footer-title {
-            font-family: 'Anek Devanagari', sans-serif;
+            font-family: 'Anek Devanagari', var(--apple-font);
             font-size: 1.5rem;
+            font-weight: 700;
             color: var(--cream);
             line-height: 1;
         }
 
         .footer-content p {
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.65;
             color: var(--sand);
             opacity: 0.85;
             margin-bottom: 12px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+            font-weight: 400;
         }
 
         .footer-content p:last-child {
@@ -672,7 +693,7 @@
             .time-label { font-size: 10px; }
             .list-item { font-size: 13px; padding: 8px; }
             .drawer { max-height: 48vh; padding: 14px 14px 10px; }
-            .queue-scroll-container { max-height: calc(48vh - 55px); padding-bottom: 20px; }
+            .queue-scroll-container { max-height: calc(48vh - 55px); padding-bottom: 30px; }
             footer { padding: 30px 16px 130px; }
             .footer-content { width: 90%; }
             .footer-content p { font-size: 11px; }
@@ -931,7 +952,13 @@
 
                         const idx = player.getPlaylistIndex();
                         document.querySelectorAll('.list-item').forEach((item, i) => {
-                            item.className = i === idx ? 'list-item active' : 'list-item';
+                            if (i === idx) {
+                                item.className = 'list-item active';
+                                // Automatic smooth scroll to active track in queue drawer
+                                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            } else {
+                                item.className = 'list-item';
+                            }
                         });
                     }
                 }
@@ -985,7 +1012,10 @@
 
             const activeIdx = player.getPlaylistIndex();
             const activeEl = document.getElementById(`queue-item-${activeIdx}`);
-            if (activeEl) activeEl.classList.add('active');
+            if (activeEl) {
+                activeEl.classList.add('active');
+                activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
 
         function applyItemData(idx, data) {
@@ -1068,6 +1098,10 @@
                 if (playlistToggleBtn) {
                     if (isOpening) {
                         playlistToggleBtn.classList.add('active');
+                        // Ensure active track is scrolled into view when opening
+                        const activeIdx = player ? player.getPlaylistIndex() : 0;
+                        const activeItem = document.getElementById(`queue-item-${activeIdx}`);
+                        if (activeItem) activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     } else {
                         playlistToggleBtn.classList.remove('active');
                     }
