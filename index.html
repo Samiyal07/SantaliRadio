@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <title>Jharna Are — Santali Ambient Radio</title>
     
+    <!-- Favicon (Full Edge-to-Edge SVG Favicon) -->
+    <link rel="icon" type="image/svg+xml" href="logo.svg?v=5" sizes="any"/>
+    <link rel="apple-touch-icon" href="logo.svg?v=4"/>
+
     <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@500;700;800&family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,7 +20,6 @@
             --live: #22c55e;
             --shade: #0c0c0c;
             --gold: #C5A059;
-            /* Lighter Glass Tokens */
             --glass: rgba(18, 16, 14, 0.70);
             --glass-border: rgba(255, 255, 255, 0.08);
         }
@@ -39,7 +42,7 @@
             flex-direction: column;
         }
 
-        /* 1. STATIC BACKDROP */
+        /* STATIC BACKDROP */
         .fixed-backdrop { 
             position: fixed; 
             inset: 0;
@@ -61,14 +64,13 @@
             background-repeat: no-repeat;
         }
 
-        /* Mobile Background Switch */
         @media (max-width: 768px) {
             .backdrop-img {
                 background-image: url('mobile_bg.png');
             }
         }
 
-        /* 2. HEADER & LIVE DOT */
+        /* HEADER & LIVE DOT */
         header {
             position: relative; z-index: 20;
             display: flex; justify-content: space-between; align-items: center;
@@ -79,7 +81,6 @@
         .dot::after { content: ''; position: absolute; inset: 0; background: var(--live); border-radius: 50%; animation: ping 1.5s infinite; }
         @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
 
-        /* Subtle Playlist Button */
         .playlist-btn {
             background: var(--glass); 
             backdrop-filter: blur(10px);
@@ -93,11 +94,15 @@
             cursor: pointer; 
             letter-spacing: 1px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.25s ease;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .playlist-btn:hover {
             border-color: var(--gold);
             color: var(--gold);
+            transform: scale(1.05);
+        }
+        .playlist-btn:active {
+            transform: scale(0.95);
         }
         .playlist-btn.active {
             background: var(--gold);
@@ -106,30 +111,112 @@
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
         }
 
-        /* 3. HERO TITLES */
+        /* ANIMATED HERO SECTION */
         .hero { 
             text-align: center; 
             margin-top: 6vh; 
             padding: 0 16px; 
         }
+
+        .hero-title-container {
+            display: inline-block;
+        }
+
         .hero h1 {
             font-family: 'Anek Devanagari', sans-serif;
-            font-size: clamp(3rem, 11vw, 6rem);
-            line-height: 0.85; 
+            font-size: clamp(2.7rem, 11vw, 6rem);
+            line-height: 0.88; 
             color: var(--cream);
-            filter: drop-shadow(0 15px 40px rgba(0,0,0,0.9));
+            user-select: none;
         }
+
+        /* Floating word animation lines */
+        .title-line {
+            display: block;
+            animation: floatLine 6s ease-in-out infinite alternate;
+            text-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.9),
+                0 0 20px rgba(197, 160, 89, 0.25);
+        }
+
+        .title-line:nth-child(2) {
+            animation-delay: -3s;
+        }
+
+        @keyframes floatLine {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+                text-shadow: 
+                    0 10px 25px rgba(0,0,0,0.85),
+                    0 0 15px rgba(197, 160, 89, 0.2);
+            }
+            100% {
+                transform: translateY(-8px) rotate(0.5deg);
+                text-shadow: 
+                    0 20px 45px rgba(0,0,0,0.95),
+                    0 0 35px rgba(197, 160, 89, 0.5);
+            }
+        }
+
         .hero p { 
             font-family: 'JetBrains Mono', monospace; 
             font-size: 11px; 
             letter-spacing: 0.4em; 
             text-transform: uppercase; 
-            margin-top: 20px; 
-            color: rgba(245,245,247,0.8); 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            margin-top: 22px; 
+            color: rgba(245,245,247,0.85); 
+            text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+            animation: fadeInSub 2s ease forwards;
         }
 
-        /* 4. FLOATING PLAYER CONTAINER (LIGHTER GLASS) */
+        @keyframes fadeInSub {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 0.85; transform: translateY(0); }
+        }
+
+        /* Colorful Instagram Profile Link */
+        .insta-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            color: var(--sand);
+            text-decoration: none;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            opacity: 0.85;
+            transition: all 0.25s ease;
+            padding: 6px 14px;
+            border-radius: 99px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color:#dc2743
+        }
+
+        .insta-link i.fa-instagram {
+            font-size: 15px;
+            background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.25s ease;
+        }
+
+        .insta-link:hover {
+            opacity: 1;
+            color: var(--cream);
+            border-color: rgba(225, 48, 108, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(225, 48, 108, 0.25);
+        }
+
+        .insta-link:hover i.fa-instagram {
+            transform: scale(1.2) rotate(-6deg);
+        }
+
+        /* FLOATING PLAYER CONTAINER */
         .player-bar {
             position: fixed; 
             bottom: max(20px, env(safe-area-inset-bottom)); 
@@ -150,6 +237,7 @@
             flex-direction: column;
             gap: 12px;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+            position: relative;
         }
 
         .player-row-top {
@@ -227,6 +315,10 @@
             background: #ffffff; 
             box-shadow: 0 0 10px var(--gold);
             cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
         }
 
         .time-label { 
@@ -239,27 +331,31 @@
             color: var(--cream);
         }
 
-        .btn-wrap { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .btn-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
         
         .nav-btn { 
             background: none; 
             border: none; 
             color: var(--sand); 
             cursor: pointer; 
-            font-size: 16px; 
-            width: 36px;
-            height: 36px;
+            font-size: 15px; 
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s ease, color 0.2s, background 0.2s; 
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s, background 0.2s; 
         }
 
         .nav-btn:hover { 
             color: var(--cream); 
-            background: rgba(255,255,255,0.08);
-            transform: scale(1.1);
+            background: rgba(255,255,255,0.12);
+            transform: scale(1.2);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.88);
         }
 
         .play-btn { 
@@ -274,14 +370,18 @@
             align-items: center; 
             justify-content: center; 
             font-size: 18px; 
-            transition: transform 0.2s ease, background 0.2s, box-shadow 0.3s;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, box-shadow 0.3s;
             position: relative;
         }
 
         .play-btn:hover { 
-            transform: scale(1.06); 
+            transform: scale(1.12); 
             background: #ffffff; 
-            box-shadow: 0 0 18px rgba(245,245,247,0.3);
+            box-shadow: 0 0 22px rgba(245,245,247,0.45);
+        }
+
+        .play-btn:active {
+            transform: scale(0.90);
         }
 
         .play-btn.is-playing {
@@ -290,19 +390,64 @@
 
         @keyframes pulseGlow {
             0% { box-shadow: 0 0 0px rgba(197, 160, 89, 0); }
-            100% { box-shadow: 0 0 16px rgba(197, 160, 89, 0.5); }
+            100% { box-shadow: 0 0 18px rgba(197, 160, 89, 0.6); }
         }
 
-        /* 5. LIVE QUEUE DRAWER */
+        /* VOLUME CONTROLS */
+        .vol-container { position: relative; }
+
+        .vol-popover {
+            position: absolute;
+            bottom: calc(100% + 14px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 14px;
+            border-radius: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: popUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            z-index: 350;
+        }
+
+        @keyframes popUp {
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .vol-slider {
+            width: 90px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .vol-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+        }
+
+        /* LIVE QUEUE DRAWER */
         .drawer {
             position: absolute; 
             left: 0; 
             right: 0;
             bottom: calc(100% + 14px); 
-            max-height: 44vh; 
+            max-height: 52vh; 
             background: var(--glass); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid var(--glass-border); 
             border-radius: 20px; 
             padding: 16px 18px; 
@@ -343,15 +488,16 @@
             cursor: pointer;
             padding: 2px 6px;
             border-radius: 50%;
-            transition: color 0.2s;
+            transition: color 0.2s, transform 0.2s;
         }
 
         .close-btn:hover {
             color: var(--cream);
+            transform: scale(1.15);
         }
 
         .queue-scroll-container {
-            max-height: calc(44vh - 45px);
+            max-height: calc(52vh - 50px);
             overflow-y: auto;
             padding-right: 4px;
         }
@@ -377,11 +523,12 @@
         }
 
         .list-item:hover { 
-            background: rgba(255, 255, 255, 0.05); 
+            background: rgba(255, 255, 255, 0.06); 
+            transform: translateX(2px);
         }
 
         .list-item.active { 
-            background: rgba(197, 160, 89, 0.1);
+            background: rgba(197, 160, 89, 0.12);
             border: 1px solid rgba(197, 160, 89, 0.45);
         }
 
@@ -438,11 +585,11 @@
             opacity: 0.5;
         }
 
-        /* 6. SUBTLE FOOTER BELOW VIEWPORT */
+        /* FOOTER */
         footer {
             width: 100%;
             margin-top: 100vh;
-            padding: 40px 20px 140px;
+            padding: 40px 20px 150px;
             background: var(--glass);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -460,9 +607,28 @@
             text-align: left;
         }
 
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo {
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+        }
+
+        .footer-title {
+            font-family: 'Anek Devanagari', sans-serif;
+            font-size: 1.5rem;
+            color: var(--cream);
+            line-height: 1;
+        }
+
         .footer-content p {
-            font-size: 12px;
-            line-height: 1.65;
+            font-size: 16px;
+            /* line-height: 1.65; */
             color: var(--sand);
             opacity: 0.85;
             margin-bottom: 12px;
@@ -500,24 +666,25 @@
             #artwork { width: 44px; height: 44px; }
             .track-name { font-size: 14px; }
             .track-artist { font-size: 11px; }
-            .btn-wrap { gap: 6px; }
-            .nav-btn { width: 32px; height: 32px; font-size: 14px; }
+            .btn-wrap { gap: 4px; }
+            .nav-btn { width: 30px; height: 32px; font-size: 13px; }
             .play-btn { width: 42px; height: 42px; font-size: 15px; }
             .time-label { font-size: 10px; }
             .list-item { font-size: 13px; padding: 8px; }
-            .drawer { max-height: 38vh; padding: 14px; }
+            .drawer { max-height: 48vh; padding: 14px; }
             footer { padding: 30px 16px 130px; }
             .footer-content { width: 90%; }
             .footer-content p { font-size: 11px; }
+            .footer-brand { gap: 12px; margin-bottom: 16px; }
+            .footer-title { font-size: 1.3rem; }
         }
 
-        /* Hide YouTube Engine */
         #player-hideout { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <!-- Frozen Backdrop Layer -->
+    <!-- Static Backdrop Layer -->
     <div class="fixed-backdrop">
         <div class="backdrop-img"></div>
     </div>
@@ -531,16 +698,26 @@
     </header>
 
     <main class="hero">
-        <h1>
-            <span style="display: block;">ᱥᱟᱱᱛᱟᱲᱤ</span>
-            <span style="display: block;">ᱨᱮᱴᱨᱳ</span>
-        </h1>
+        <div class="hero-title-container">
+            <h1>
+                <span class="title-line">ᱥᱟᱱᱛᱟᱲᱤ</span>
+                <span class="title-line">ᱨᱮᱴᱨᱳ</span>
+            </h1>
+        </div>
         <p>Santali Retro · Those Were the days</p>
+        <a href="https://instagram.com/nyxhasda" target="_blank" rel="noopener noreferrer" class="insta-link">
+            <i class="fab fa-instagram"></i>
+            <span>@nyxhasda</span>
+        </a>
     </main>
 
-    <!-- Footer Below Viewport -->
+    <!-- Footer Below Viewport with Larger Logo Attributes -->
     <footer>
         <div class="footer-content">
+            <div class="footer-brand">
+                <img src="logo.svg?v=4" alt="Jharna Are Logo" class="footer-logo" width="64" height="64"/>
+                <span class="footer-title">ᱥᱟᱱᱛᱟᱲᱤ ᱨᱮᱴᱨᱳ</span>
+            </div>
             <p>All songs played here are embedded directly from YouTube. We do not host or store any audio or video files on our servers.</p>
             <p>If you hold rights to anything here and want it taken off, email <a href="mailto:samiyalh@gmail.com">samiyalh@gmail.com</a> and it comes down immediately.</p>
         </div>
@@ -576,6 +753,13 @@
                     <button class="nav-btn" onclick="prevTrack()" title="Previous"><i class="fas fa-backward"></i></button>
                     <button class="play-btn" id="play-btn" onclick="togglePlay()" title="Play / Pause"><i id="play-icon" class="fas fa-play"></i></button>
                     <button class="nav-btn" onclick="nextTrack()" title="Next"><i class="fas fa-forward"></i></button>
+                    
+                    <div class="vol-container">
+                        <button class="nav-btn" onclick="toggleVolPopover()" title="Volume"><i id="vol-icon" class="fas fa-volume-high"></i></button>
+                        <div class="vol-popover" id="vol-popover">
+                            <input type="range" id="vol-slider" class="vol-slider" min="0" max="100" value="100" oninput="setVolume(this.value)">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -601,7 +785,7 @@
         let syncTimer = null;
         let playlistMetadata = {};
 
-        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn, queueHeader;
+        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn, queueHeader, volIcon, volPopover;
 
         document.addEventListener('DOMContentLoaded', () => {
             statusText = document.getElementById('status-text');
@@ -616,6 +800,8 @@
             pillCard = document.getElementById('pill-card');
             playlistToggleBtn = document.getElementById('playlist-toggle-btn');
             queueHeader = document.getElementById('queue-count-header');
+            volIcon = document.getElementById('vol-icon');
+            volPopover = document.getElementById('vol-popover');
 
             seekSlider.addEventListener('input', (e) => {
                 if (player && typeof player.getDuration === 'function') {
@@ -649,7 +835,9 @@
                     autoplay: 0,
                     controls: 1,
                     enablejsapi: 1,
-                    rel: 0
+                    rel: 0,
+                    loop: 1,
+                    playlist: PLAYLIST_ID
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -699,7 +887,13 @@
                 updateMetadata();
                 renderQueueWithMetadata();
             } else if (event.data === YT.PlayerState.ENDED) {
-                nextTrack();
+                const currIdx = player.getPlaylistIndex();
+                const totalTracks = player.getPlaylist() ? player.getPlaylist().length : 0;
+                if (currIdx >= totalTracks - 1) {
+                    player.playVideoAt(0);
+                } else {
+                    nextTrack();
+                }
             }
         }
 
@@ -866,6 +1060,23 @@
                     } else {
                         playlistToggleBtn.classList.remove('active');
                     }
+                }
+            }
+        }
+
+        function toggleVolPopover() {
+            if (volPopover) {
+                volPopover.style.display = volPopover.style.display === 'flex' ? 'none' : 'flex';
+            }
+        }
+
+        function setVolume(val) {
+            if (player && typeof player.setVolume === 'function') {
+                player.setVolume(val);
+                if (volIcon) {
+                    if (val == 0) volIcon.className = 'fas fa-volume-xmark';
+                    else if (val < 50) volIcon.className = 'fas fa-volume-low';
+                    else volIcon.className = 'fas fa-volume-high';
                 }
             }
         }
