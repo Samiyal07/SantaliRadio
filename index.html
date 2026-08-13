@@ -15,13 +15,18 @@
 
     <style>
         :root {
-            --cream: #f5f5f7;
-            --sand: #d1d1d1;
-            --live: #22c55e;
-            --shade: #0c0c0c;
-            --gold: #C5A059;
-            --glass: rgba(18, 16, 14, 0.70);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            /* =========================================
+               THEME COLOR VARIABLES (EDIT HERE)
+               ========================================= */
+            --accent-gold: #C5A059;         /* Active highlights, seek fill, borders */
+            --accent-live: #22c55e;         /* Live dot color */
+            --text-cream: #f5f5f7;          /* Title & main text */
+            --text-sand: #d1d1d1;           /* Subtitle & secondary text */
+            --bg-shade: #0c0c0c;            /* Body background tint */
+            --glass-bg: rgba(18, 16, 14, 0.70); /* Glass surface fill */
+            --glass-border: rgba(255, 255, 255, 0.08); /* Border outline */
+
+            /* Typography Stack */
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
@@ -35,8 +40,8 @@
             font-family: var(--apple-font);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            background-color: var(--shade);
-            color: var(--sand);
+            background-color: var(--bg-shade);
+            color: var(--text-sand);
             min-height: 100vh;
             overflow-x: hidden;
             overflow-y: auto;
@@ -90,12 +95,12 @@
             letter-spacing: 0.15em; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
         }
-        .dot { width: 8px; height: 8px; background: var(--live); border-radius: 50%; position: relative; }
-        .dot::after { content: ''; position: absolute; inset: 0; background: var(--live); border-radius: 50%; animation: ping 1.5s infinite; }
+        .dot { width: 8px; height: 8px; background: var(--accent-live); border-radius: 50%; position: relative; }
+        .dot::after { content: ''; position: absolute; inset: 0; background: var(--accent-live); border-radius: 50%; animation: ping 1.5s infinite; }
         @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
 
         .playlist-btn {
-            background: var(--glass); 
+            background: var(--glass-bg); 
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border); 
@@ -111,17 +116,17 @@
             font-family: var(--apple-font);
         }
         .playlist-btn:hover {
-            border-color: var(--gold);
-            color: var(--gold);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
             transform: scale(1.05);
         }
         .playlist-btn:active {
             transform: scale(0.95);
         }
         .playlist-btn.active {
-            background: var(--gold);
+            background: var(--accent-gold);
             color: #000;
-            border-color: var(--gold);
+            border-color: var(--accent-gold);
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
         }
 
@@ -140,7 +145,7 @@
             font-family: 'Anek Devanagari', var(--apple-font);
             font-size: clamp(2.7rem, 11vw, 6rem);
             line-height: 0.88; 
-            color: var(--cream);
+            color: var(--text-cream);
             user-select: none;
             font-weight: 800;
         }
@@ -218,7 +223,7 @@
 
         .insta-link:hover {
             opacity: 1;
-            color: var(--cream);
+            color: var(--text-cream);
             border-color: rgba(225, 48, 108, 0.5);
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(225, 48, 108, 0.25);
@@ -239,7 +244,7 @@
         }
 
         .glass-pill {
-            background: var(--glass); 
+            background: var(--glass-bg); 
             backdrop-filter: blur(10px); 
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border); 
@@ -298,8 +303,8 @@
             100% { transform: translateX(-50%); }
         }
 
-        .track-name { font-size: 15px; font-weight: 600; color: var(--cream); letter-spacing: -0.01em; }
-        .track-artist { font-size: 12px; color: var(--sand); opacity: 0.65; margin-top: 3px; font-weight: 400; }
+        .track-name { font-size: 15px; font-weight: 600; color: var(--text-cream); letter-spacing: -0.01em; }
+        .track-artist { font-size: 12px; color: var(--text-sand); opacity: 0.65; margin-top: 3px; font-weight: 400; }
 
         .seek-container { 
             display: flex; 
@@ -313,7 +318,7 @@
             flex: 1; 
             height: 4px; 
             -webkit-appearance: none; 
-            background: linear-gradient(to right, var(--gold) 0%, var(--gold) 0%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.15) 100%); 
+            background: linear-gradient(to right, var(--accent-gold) 0%, var(--accent-gold) 0%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.15) 100%); 
             border-radius: 4px;
             outline: none; 
             cursor: pointer; 
@@ -325,7 +330,7 @@
             height: 12px; 
             border-radius: 50%; 
             background: #ffffff; 
-            box-shadow: 0 0 10px var(--gold);
+            box-shadow: 0 0 10px var(--accent-gold);
             cursor: pointer;
             transition: transform 0.2s ease;
         }
@@ -340,7 +345,7 @@
             opacity: 0.75; 
             white-space: nowrap;
             flex-shrink: 0;
-            color: var(--cream);
+            color: var(--text-cream);
         }
 
         .btn-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
@@ -348,7 +353,7 @@
         .nav-btn { 
             background: none; 
             border: none; 
-            color: var(--sand); 
+            color: var(--text-sand); 
             cursor: pointer; 
             font-size: 15px; 
             width: 34px;
@@ -361,7 +366,7 @@
         }
 
         .nav-btn:hover { 
-            color: var(--cream); 
+            color: var(--text-cream); 
             background: rgba(255,255,255,0.12);
             transform: scale(1.2);
         }
@@ -371,8 +376,8 @@
         }
 
         .play-btn { 
-            background: var(--cream); 
-            color: var(--shade); 
+            background: var(--text-cream); 
+            color: var(--bg-shade); 
             width: 48px; 
             height: 48px; 
             border-radius: 50%; 
@@ -413,7 +418,7 @@
             bottom: calc(100% + 14px);
             left: 50%;
             transform: translateX(-50%) translateY(10px);
-            background: var(--glass);
+            background: var(--glass-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
@@ -446,7 +451,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: var(--gold);
+            background: var(--accent-gold);
             cursor: pointer;
         }
 
@@ -457,7 +462,7 @@
             right: 0;
             bottom: calc(100% + 14px); 
             max-height: 52vh; 
-            background: var(--glass); 
+            background: var(--glass-bg); 
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid var(--glass-border); 
@@ -504,7 +509,7 @@
         }
 
         .close-btn:hover {
-            color: var(--cream);
+            color: var(--text-cream);
             transform: scale(1.15);
         }
 
@@ -556,7 +561,7 @@
         }
 
         .list-item.active .track-num {
-            color: var(--gold);
+            color: var(--accent-gold);
         }
 
         .track-info {
@@ -567,7 +572,7 @@
         .track-info .q-title {
             font-size: 13px;
             font-weight: 600;
-            color: var(--cream);
+            color: var(--text-cream);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -576,7 +581,7 @@
         }
 
         .list-item.active .track-info .q-title {
-            color: var(--gold);
+            color: var(--accent-gold);
         }
 
         .track-info .q-sub {
@@ -606,7 +611,7 @@
             width: 100%;
             margin-top: 100vh;
             padding: 40px 20px 150px;
-            background: var(--glass);
+            background: var(--glass-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-top: 1px solid var(--glass-border);
@@ -639,14 +644,14 @@
             font-family: 'Anek Devanagari', var(--apple-font);
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--cream);
+            color: var(--text-cream);
             line-height: 1;
         }
 
         .footer-content p {
             font-size: 13px;
             line-height: 1.65;
-            color: var(--sand);
+            color: var(--text-sand);
             opacity: 0.85;
             margin-bottom: 12px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.6);
@@ -658,14 +663,14 @@
         }
 
         .footer-content a {
-            color: var(--gold);
+            color: var(--accent-gold);
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s ease;
         }
 
         .footer-content a:hover {
-            color: var(--cream);
+            color: var(--text-cream);
             text-decoration: underline;
         }
 
@@ -812,6 +817,10 @@
         let isPlaying = false;
         let syncTimer = null;
         let playlistMetadata = {};
+        
+        // Buffering / Loading Retry Guard Counters
+        let loadRetryCount = 0;
+        const MAX_LOAD_RETRIES = 3;
 
         let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn, queueHeader, volIcon, volPopover;
 
@@ -845,7 +854,7 @@
 
         function updateSliderFill(percent) {
             if (seekSlider) {
-                seekSlider.style.background = `linear-gradient(to right, var(--gold) ${percent}%, rgba(255,255,255,0.15) ${percent}%)`;
+                seekSlider.style.background = `linear-gradient(to right, var(--accent-gold) ${percent}%, rgba(255,255,255,0.15) ${percent}%)`;
             }
         }
 
@@ -899,6 +908,7 @@
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.PLAYING) {
                 isPlaying = true;
+                loadRetryCount = 0; // Reset retries on successful play
                 if (playIcon) playIcon.className = 'fas fa-pause';
                 if (playBtn) playBtn.classList.add('is-playing');
                 if (pillCard) pillCard.classList.add('playing');
@@ -911,7 +921,7 @@
                 if (pillCard) pillCard.classList.remove('playing');
                 if (statusText) statusText.textContent = 'Paused';
             } else if (event.data === YT.PlayerState.BUFFERING) {
-                if (statusText) statusText.textContent = 'Buffering...';
+                if (statusText) statusText.textContent = 'Buffering / Loading...';
             } else if (event.data === YT.PlayerState.CUED) {
                 if (statusText) statusText.textContent = 'On Air — Santali Radio';
                 updateMetadata();
@@ -928,12 +938,30 @@
         }
 
         function onPlayerError(event) {
-            console.warn('Playback error (Code: ' + event.data + '). Auto-skipping...');
-            if (event.data === 2) {
-                if (statusText) statusText.textContent = 'Invalid Playlist ID!';
+            const currIdx = player && typeof player.getPlaylistIndex === 'function' ? player.getPlaylistIndex() : 0;
+            console.warn('Playback network warning (Code: ' + event.data + '). Retrying...');
+
+            // If network is slow, give current track time to load instead of instantly skipping
+            if (loadRetryCount < MAX_LOAD_RETRIES) {
+                loadRetryCount++;
+                if (statusText) statusText.textContent = `Connecting (${loadRetryCount}/${MAX_LOAD_RETRIES})...`;
+                setTimeout(() => {
+                    if (player && typeof player.playVideo === 'function') {
+                        player.playVideo();
+                    }
+                }, 3000);
             } else {
-                if (statusText) statusText.textContent = 'Skipping track...';
-                setTimeout(() => nextTrack(), 600);
+                // If max retries reached and it's not track 0, skip to next unblocked song & sync UI meta
+                loadRetryCount = 0;
+                if (currIdx > 0) {
+                    if (statusText) statusText.textContent = 'Unplayable song, skipping...';
+                    setTimeout(() => {
+                        nextTrack();
+                        updateMetadata();
+                    }, 800);
+                } else {
+                    if (statusText) statusText.textContent = 'Network slow, tap ▶ to retry';
+                }
             }
         }
 
@@ -1078,6 +1106,8 @@
                 const playlist = player.getPlaylist();
                 const totalTracks = playlist ? playlist.length : 0;
                 
+                loadRetryCount = 0; // Reset retries on manual skip
+                
                 if (currIdx >= totalTracks - 1) {
                     if (statusText) statusText.textContent = 'Looping to Start...';
                     player.playVideoAt(0);
@@ -1085,13 +1115,16 @@
                     if (statusText) statusText.textContent = 'Loading Next...';
                     player.nextVideo();
                 }
+                setTimeout(() => updateMetadata(), 300);
             }
         }
 
         function prevTrack() {
             if (player && typeof player.previousVideo === 'function') {
+                loadRetryCount = 0; // Reset retries on manual skip
                 if (statusText) statusText.textContent = 'Loading Prev...';
                 player.previousVideo();
+                setTimeout(() => updateMetadata(), 300);
             }
         }
 
