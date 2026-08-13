@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <title>Jharna Are — Santali Ambient Radio</title>
     
-    <!-- Favicon (Full Edge-to-Edge SVG Favicon) -->
-    <link rel="icon" type="image/svg+xml" href="logo.svg?v=5" sizes="any"/>
+    <!-- Favicon (Multi-browser SVG Support) -->
+    <link rel="icon" type="image/svg+xml" href="logo.svg?v=4" sizes="32x32 16x16"/>
     <link rel="apple-touch-icon" href="logo.svg?v=4"/>
 
     <!-- Fonts & Icons -->
@@ -192,7 +192,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            color:#dc2743
         }
 
         .insta-link i.fa-instagram {
@@ -438,7 +437,7 @@
             cursor: pointer;
         }
 
-        /* LIVE QUEUE DRAWER */
+        /* LIVE QUEUE DRAWER (FIXED SCROLL & LAST TRACK VISIBILITY) */
         .drawer {
             position: absolute; 
             left: 0; 
@@ -450,7 +449,7 @@
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid var(--glass-border); 
             border-radius: 20px; 
-            padding: 16px 18px; 
+            padding: 16px 18px 12px; 
             z-index: 200; 
             display: none; 
             overflow: hidden;
@@ -497,9 +496,10 @@
         }
 
         .queue-scroll-container {
-            max-height: calc(52vh - 50px);
+            max-height: calc(52vh - 60px);
             overflow-y: auto;
             padding-right: 4px;
+            padding-bottom: 16px; /* Essential bottom clearance for last song */
         }
 
         .queue-scroll-container::-webkit-scrollbar {
@@ -589,7 +589,7 @@
         footer {
             width: 100%;
             margin-top: 100vh;
-            padding: 40px 20px 150px;
+            padding: 40px 20px 140px;
             background: var(--glass);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -627,8 +627,8 @@
         }
 
         .footer-content p {
-            font-size: 16px;
-            /* line-height: 1.65; */
+            font-size: 12px;
+            line-height: 1.65;
             color: var(--sand);
             opacity: 0.85;
             margin-bottom: 12px;
@@ -671,7 +671,8 @@
             .play-btn { width: 42px; height: 42px; font-size: 15px; }
             .time-label { font-size: 10px; }
             .list-item { font-size: 13px; padding: 8px; }
-            .drawer { max-height: 48vh; padding: 14px; }
+            .drawer { max-height: 48vh; padding: 14px 14px 10px; }
+            .queue-scroll-container { max-height: calc(48vh - 55px); padding-bottom: 20px; }
             footer { padding: 30px 16px 130px; }
             .footer-content { width: 90%; }
             .footer-content p { font-size: 11px; }
@@ -1036,8 +1037,18 @@
 
         function nextTrack() {
             if (player && typeof player.nextVideo === 'function') {
-                if (statusText) statusText.textContent = 'Loading Next...';
-                player.nextVideo();
+                const currIdx = player.getPlaylistIndex();
+                const playlist = player.getPlaylist();
+                const totalTracks = playlist ? playlist.length : 0;
+                
+                // If clicking next on the last song, loop to song #1
+                if (currIdx >= totalTracks - 1) {
+                    if (statusText) statusText.textContent = 'Looping to Start...';
+                    player.playVideoAt(0);
+                } else {
+                    if (statusText) statusText.textContent = 'Loading Next...';
+                    player.nextVideo();
+                }
             }
         }
 
