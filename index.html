@@ -3,8 +3,12 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-    <title>Santali Retro — Enjoy Old Santali Songs</title>
+    <title>Santali Retro — Enjoy Santali Old Songs</title>
     
+    <!-- Preload Background WebP Images for Instant Rendering -->
+    <link rel="preload" as="image" href="desktop_bg.webp" media="(min-width: 769px)"/>
+    <link rel="preload" as="image" href="mobile_bg.webp" media="(max-width: 768px)"/>
+
     <!-- Favicon (Full Edge-to-Edge SVG Favicon) -->
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=5" sizes="any"/>
     <link rel="apple-touch-icon" href="logo.svg?v=4"/>
@@ -67,7 +71,7 @@
             width: 100%; 
             height: 100%; 
             object-fit: cover;
-            background-image: url('desktop_bg.png');
+            background-image: url('desktop_bg.webp');
             background-size: cover; 
             background-position: center;
             background-repeat: no-repeat;
@@ -75,7 +79,7 @@
 
         @media (max-width: 768px) {
             .backdrop-img {
-                background-image: url('mobile_bg.png');
+                background-image: url('mobile_bg.webp');
             }
         }
 
@@ -771,7 +775,7 @@
         <div class="glass-pill" id="pill-card">
             <!-- Top Controls Row -->
             <div class="player-row-top">
-                <img id="artwork" src="desktop_bg.png" alt="Artwork"/>
+                <img id="artwork" src="desktop_bg.webp" alt="Artwork"/>
                 
                 <div class="track-meta">
                     <div class="marquee-container" id="marquee-box">
