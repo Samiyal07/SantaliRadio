@@ -815,6 +815,7 @@
 
         let player = null;
         let isPlaying = false;
+        let hasStartedPlayback = false; // Flag to track if user ever pressed Play
         let syncTimer = null;
         let playlistMetadata = {};
         
@@ -851,6 +852,7 @@
                 }
             });
 
+            // Re-trigger play state when returning to tab if player was active
             document.addEventListener('visibilitychange', () => {
                 if (!document.hidden && isPlaying && player && typeof player.playVideo === 'function') {
                     player.playVideo();
@@ -914,6 +916,7 @@
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.PLAYING) {
                 isPlaying = true;
+                hasStartedPlayback = true; // Mark playback as initiated by user
                 loadRetryCount = 0; // Reset retries on successful play
                 if (playIcon) playIcon.className = 'fas fa-pause';
                 if (playBtn) playBtn.classList.add('is-playing');
@@ -927,8 +930,8 @@
                 if (pillCard) pillCard.classList.remove('playing');
                 if (statusText) statusText.textContent = 'Paused';
             } else if (event.data === YT.PlayerState.BUFFERING) {
-                // Only set status to Buffering if audio is actually trying to play
-                if (isPlaying && statusText) {
+                // Ignore initial buffering event before playback is ever started
+                if (hasStartedPlayback && statusText) {
                     statusText.textContent = 'Buffering...';
                 }
             } else if (event.data === YT.PlayerState.CUED) {
@@ -988,7 +991,7 @@
                         if (statusText) {
                             if (isPlaying) {
                                 statusText.textContent = 'Now Playing';
-                            } else if (!statusText.textContent.includes('Connecting')) {
+                            } else if (!hasStartedPlayback || statusText.textContent === 'Radio Ready') {
                                 statusText.textContent = 'On Air — Santali Radio';
                             }
                         }
@@ -1092,7 +1095,7 @@
                     if (currTime) currTime.textContent = formatTime(c);
                     updateSliderFill(percent);
 
-                    if (statusText && (statusText.textContent === 'Buffering...' || statusText.textContent.includes('Connecting'))) {
+                    if (statusText && (statusText.textContent.includes('Buffering') || statusText.textContent.includes('Connecting'))) {
                         statusText.textContent = 'Now Playing';
                     }
 
@@ -1115,6 +1118,7 @@
             if (isPlaying) {
                 player.pauseVideo();
             } else {
+                hasStartedPlayback = true;
                 player.playVideo();
             }
         }
@@ -1125,7 +1129,8 @@
                 const playlist = player.getPlaylist();
                 const totalTracks = playlist ? playlist.length : 0;
                 
-                loadRetryCount = 0;
+                loadRetryCount = 0; // Reset retries on manual skip
+                hasStartedPlayback = true;
                 
                 if (currIdx >= totalTracks - 1) {
                     if (statusText) statusText.textContent = 'Looping to Start...';
@@ -1140,7 +1145,8 @@
 
         function prevTrack() {
             if (player && typeof player.previousVideo === 'function') {
-                loadRetryCount = 0;
+                loadRetryCount = 0; // Reset retries on manual skip
+                hasStartedPlayback = true;
                 if (statusText) statusText.textContent = 'Loading Prev...';
                 player.previousVideo();
                 setTimeout(() => updateMetadata(), 300);
