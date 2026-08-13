@@ -978,6 +978,11 @@
                         
                         if (artistEl) artistEl.textContent = data.author || 'Santali Artist';
 
+                        // Set status to ON AIR / READY if loaded but not actively playing
+                        if (statusText && !isPlaying && statusText.textContent.includes('Loading')) {
+                            statusText.textContent = 'On Air — Santali Radio';
+                        }
+
                         const videoUrl = player.getVideoUrl();
                         if (videoUrl && videoUrl.includes('v=')) {
                             const vId = videoUrl.split('v=')[1].split('&')[0];
