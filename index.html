@@ -850,6 +850,12 @@
                     }
                 }
             });
+
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && isPlaying && player && typeof player.playVideo === 'function') {
+                    player.playVideo();
+                }
+            });
         });
 
         function updateSliderFill(percent) {
@@ -921,7 +927,10 @@
                 if (pillCard) pillCard.classList.remove('playing');
                 if (statusText) statusText.textContent = 'Paused';
             } else if (event.data === YT.PlayerState.BUFFERING) {
-                if (statusText) statusText.textContent = 'Buffering...';
+                // Only set status to Buffering if audio is actually trying to play
+                if (isPlaying && statusText) {
+                    statusText.textContent = 'Buffering...';
+                }
             } else if (event.data === YT.PlayerState.CUED) {
                 if (statusText) statusText.textContent = 'On Air — Santali Radio';
                 updateMetadata();
@@ -976,11 +985,10 @@
                         
                         if (artistEl) artistEl.textContent = data.author || 'Santali Artist';
 
-                        // Check status text: if audio is actively playing, ensure it shows "Now Playing", otherwise keep "On Air"
                         if (statusText) {
                             if (isPlaying) {
                                 statusText.textContent = 'Now Playing';
-                            } else if (statusText.textContent.includes('Loading') || statusText.textContent.includes('Buffering')) {
+                            } else if (!statusText.textContent.includes('Connecting')) {
                                 statusText.textContent = 'On Air — Santali Radio';
                             }
                         }
@@ -1084,8 +1092,7 @@
                     if (currTime) currTime.textContent = formatTime(c);
                     updateSliderFill(percent);
 
-                    // Ensure status correctly reflects "Now Playing" as time advances
-                    if (statusText && (statusText.textContent.includes('Buffering') || statusText.textContent.includes('Loading'))) {
+                    if (statusText && (statusText.textContent === 'Buffering...' || statusText.textContent.includes('Connecting'))) {
                         statusText.textContent = 'Now Playing';
                     }
 
@@ -1118,7 +1125,7 @@
                 const playlist = player.getPlaylist();
                 const totalTracks = playlist ? playlist.length : 0;
                 
-                loadRetryCount = 0; // Reset retries on manual skip
+                loadRetryCount = 0;
                 
                 if (currIdx >= totalTracks - 1) {
                     if (statusText) statusText.textContent = 'Looping to Start...';
@@ -1133,7 +1140,7 @@
 
         function prevTrack() {
             if (player && typeof player.previousVideo === 'function') {
-                loadRetryCount = 0; // Reset retries on manual skip
+                loadRetryCount = 0;
                 if (statusText) statusText.textContent = 'Loading Prev...';
                 player.previousVideo();
                 setTimeout(() => updateMetadata(), 300);
