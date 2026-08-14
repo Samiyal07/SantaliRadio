@@ -35,8 +35,8 @@
             --text-cream: #f5f5f7;          /* Title & main text */
             --text-sand: #d1d1d1;           /* Subtitle & secondary text */
             --bg-shade: #0c0c0c;            /* Body background tint */
-            --glass-bg: rgba(18, 16, 14, 0.70); /* Glass surface fill */
-            --glass-border: rgba(255, 255, 255, 0.08); /* Border outline */
+            --glass-bg: rgba(18, 16, 14, 0.76); /* Glass surface fill */
+            --glass-border: rgba(255, 255, 255, 0.12); /* Border outline */
 
             /* Typography Stack */
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -63,9 +63,7 @@
             letter-spacing: -0.01em;
         }
 
-        /* =========================================
-           CRISP ANIMATED APP LAUNCH SPLASH
-           ========================================= */
+        /* CRISP ANIMATED APP LAUNCH SPLASH */
         #pwa-splash {
             position: fixed;
             inset: 0;
@@ -174,7 +172,7 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         .status { 
             display: flex; 
@@ -190,19 +188,19 @@
         .dot::after { content: ''; position: absolute; inset: 0; background: var(--accent-live); border-radius: 50%; animation: ping 1.5s infinite; }
         @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
 
-        .playlist-btn, .header-install-btn, .header-icon-btn {
+        .playlist-btn, .header-install-btn {
             background: var(--glass-bg); 
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid var(--glass-border); 
             color: white; 
             padding: 8px 18px; 
             border-radius: 99px; 
             font-size: 11px; 
-            font-weight: 600;
+            font-weight: 600; 
             cursor: pointer; 
             letter-spacing: 0.1em;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             font-family: var(--apple-font);
             display: flex;
@@ -210,27 +208,16 @@
             gap: 6px;
         }
 
-        .header-icon-btn {
-            padding: 8px 12px;
-            font-size: 13px;
-        }
-
-        .header-icon-btn.active {
-            background: var(--accent-gold);
-            color: #000;
-            border-color: var(--accent-gold);
-        }
-
         .header-install-btn {
             display: none;
             border-color: rgba(197, 160, 89, 0.35);
         }
-        .header-install-btn:hover, .playlist-btn:hover, .header-icon-btn:hover {
+        .header-install-btn:hover, .playlist-btn:hover {
             border-color: var(--accent-gold);
             color: var(--accent-gold);
             transform: scale(1.05);
         }
-        .header-install-btn:active, .playlist-btn:active, .header-icon-btn:active {
+        .header-install-btn:active, .playlist-btn:active {
             transform: scale(0.95);
         }
         .playlist-btn.active {
@@ -238,102 +225,6 @@
             color: #000;
             border-color: var(--accent-gold);
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
-        }
-
-        /* HEADER DROPDOWN POPOVERS (Opens Downwards) */
-        .ambient-container { position: relative; }
-
-        .header-popover {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            padding: 12px 14px;
-            border-radius: 20px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-            animation: popDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            z-index: 400;
-            min-width: 155px;
-        }
-
-        @keyframes popDown {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .popover-header {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: rgba(245,245,247,0.6);
-            width: 100%;
-            text-align: center;
-        }
-
-        .ambient-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            width: 100%;
-            font-size: 11px;
-            color: var(--text-cream);
-        }
-
-        .ambient-btn {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-sand);
-            padding: 4px 10px;
-            border-radius: 99px;
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .ambient-btn.active {
-            background: var(--accent-gold);
-            color: #000;
-            border-color: var(--accent-gold);
-            font-weight: 700;
-        }
-
-        .timer-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            width: 100%;
-        }
-
-        .timer-btn {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-sand);
-            padding: 6px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .timer-btn:hover {
-            color: var(--text-cream);
-            border-color: var(--accent-gold);
-        }
-
-        .timer-btn.active {
-            background: var(--accent-gold);
-            color: #000;
-            border-color: var(--accent-gold);
-            font-weight: 700;
         }
 
         /* ANIMATED HERO SECTION */
@@ -559,43 +450,49 @@
             .header-install-btn { display: none !important; }
         }
 
-        /* AMBIENT GLOW & FLOATING PLAYER CONTAINER */
+        /* ==========================================================
+           SINGLE UNIFIED FLOATING PLAYER BAR
+           ========================================================== */
         .player-bar {
             position: fixed; 
             bottom: max(20px, env(safe-area-inset-bottom)); 
             left: 50%; 
             transform: translateX(-50%);
-            width: min(92%, 640px); 
+            width: min(92%, 620px); 
             z-index: 300;
         }
 
+        /* Vibrant Dynamic Ambient Glow */
         .player-ambient-glow {
             position: absolute;
-            inset: -15px -10px;
-            background: radial-gradient(circle, rgba(197, 160, 89, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
-            border-radius: 40px;
-            filter: blur(20px);
+            inset: -22px -16px;
+            background: radial-gradient(circle at center, rgba(197, 160, 89, 0.55) 0%, rgba(220, 39, 67, 0.25) 45%, rgba(0, 0, 0, 0) 75%);
+            border-radius: 46px;
+            filter: blur(28px);
             z-index: -1;
-            opacity: 0.6;
+            opacity: 0.92;
             transition: background 1.5s ease, opacity 0.8s ease;
             pointer-events: none;
         }
 
-        .glass-pill {
-            background: var(--glass-bg); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border); 
-            border-radius: 28px;
-            padding: 16px 22px; 
-            display: flex; 
+        /* UNIFIED GLASS PILL */
+        .liquid-player-window {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 16px 20px;
+            display: flex;
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
             position: relative;
         }
 
-        .player-row-top {
+        /* ROW 1: NOW PLAYING METADATA */
+        .player-meta-row {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -603,11 +500,12 @@
         }
 
         #artwork { 
-            width: 52px; 
-            height: 52px; 
+            width: 48px; 
+            height: 48px; 
             border-radius: 50%; 
             object-fit: cover; 
-            border: 2px solid rgba(255,255,255,0.18); 
+            border: 2px solid rgba(255,255,255,0.22); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             flex-shrink: 0; 
             transition: transform 0.5s ease;
         }
@@ -620,7 +518,13 @@
             100% { transform: rotate(360deg); }
         }
 
-        .track-meta { flex: 1; min-width: 0; }
+        .track-meta { 
+            flex: 1; 
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
         
         .marquee-container {
             width: 100%;
@@ -642,14 +546,15 @@
         }
 
         .track-name { font-size: 15px; font-weight: 600; color: var(--text-cream); letter-spacing: -0.01em; }
-        .track-artist { font-size: 12px; color: var(--text-sand); opacity: 0.65; margin-top: 3px; font-weight: 400; }
+        .track-artist { font-size: 12px; color: var(--text-sand); opacity: 0.65; margin-top: 2px; font-weight: 400; }
 
+        /* ROW 2: INTEGRATED SEEK & TIME STATUS BAR */
         .seek-container { 
             display: flex; 
             align-items: center; 
-            gap: 12px; 
+            gap: 10px; 
             width: 100%;
-            padding-top: 2px;
+            padding: 0 2px;
         }
 
         .slider { 
@@ -686,34 +591,50 @@
             color: var(--text-cream);
         }
 
-        .btn-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        
-        .nav-btn { 
-            background: none; 
-            border: none; 
-            color: var(--text-sand); 
-            cursor: pointer; 
-            font-size: 14px; 
-            width: 32px;
-            height: 32px;
+        /* ROW 3: NORMAL CONTROLS DECK */
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding-top: 2px;
+        }
+
+        .controls-left, .controls-right, .controls-center {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* NORMAL STANDARD BUTTONS */
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-sand);
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s, background 0.2s; 
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .nav-btn:hover { 
-            color: var(--text-cream); 
-            background: rgba(255,255,255,0.12);
-            transform: scale(1.2);
+        .nav-btn:hover {
+            color: var(--text-cream);
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.12);
         }
 
-        .nav-btn:active { transform: scale(0.88); }
+        .nav-btn:active { 
+            transform: scale(0.9); 
+        }
 
         .nav-btn.active {
             color: var(--accent-gold);
-            background: rgba(197, 160, 89, 0.15);
+            background: rgba(197, 160, 89, 0.18);
         }
 
         .like-btn.liked {
@@ -723,35 +644,38 @@
 
         @keyframes heartBeat {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.35); }
+            50% { transform: scale(1.3); }
         }
 
-        .play-btn { 
-            background: var(--text-cream); 
-            color: var(--bg-shade); 
-            width: 46px; 
-            height: 46px; 
-            border-radius: 50%; 
-            border: none; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 17px; 
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, box-shadow 0.3s;
-            position: relative;
+        /* STANDARD HIGH-CONTRAST PLAY BUTTON */
+        .play-btn {
+            background: var(--text-cream);
+            color: var(--bg-shade);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, background 0.2s;
         }
 
-        .play-btn:hover { 
-            transform: scale(1.12); 
-            background: #ffffff; 
-            box-shadow: 0 0 22px rgba(245,245,247,0.45);
+        .play-btn:hover {
+            transform: scale(1.1);
+            background: #ffffff;
+            box-shadow: 0 0 22px rgba(245, 245, 247, 0.55);
         }
 
-        .play-btn:active { transform: scale(0.90); }
+        .play-btn:active { 
+            transform: scale(0.92); 
+        }
 
         .play-btn.is-playing {
-            animation: pulseGlow 2s infinite alternate ease-in-out;
+            animation: pulseGlow 2.5s infinite alternate ease-in-out;
         }
 
         @keyframes pulseGlow {
@@ -759,30 +683,104 @@
             100% { box-shadow: 0 0 18px rgba(197, 160, 89, 0.6); }
         }
 
-        /* VOLUME POPOVER (Bottom Upwards) */
-        .vol-container { position: relative; }
-
-        .vol-popover {
+        /* POPOVERS (Upward with High Contrast Frosted Glass) */
+        .deck-popover {
             position: absolute;
             bottom: calc(100% + 14px);
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             border: 1px solid var(--glass-border);
-            padding: 12px 14px;
+            padding: 14px;
             border-radius: 20px;
             display: none;
+            flex-direction: column;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.7);
             animation: popUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            z-index: 350;
+            z-index: 400;
+            min-width: 150px;
         }
 
         @keyframes popUp {
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .popover-header {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(245,245,247,0.6);
+            width: 100%;
+            text-align: center;
+        }
+
+        .ambient-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            font-size: 11px;
+            color: var(--text-cream);
+        }
+
+        .ambient-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-sand);
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .ambient-btn.active {
+            background: var(--accent-gold);
+            color: #000;
+            border-color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        .timer-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .timer-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-sand);
+            padding: 6px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .timer-btn:hover {
+            color: var(--text-cream);
+            border-color: var(--accent-gold);
+        }
+
+        .timer-btn.active-timer {
+            background: var(--accent-gold) !important;
+            color: #000 !important;
+            border-color: var(--accent-gold) !important;
+            font-weight: 700 !important;
+        }
+
+        .vol-popover-deck {
+            flex-direction: row;
+            min-width: auto;
+            right: 0;
+            left: auto;
         }
 
         .vol-slider {
@@ -812,10 +810,10 @@
             bottom: calc(100% + 14px); 
             max-height: 52vh; 
             background: var(--glass-bg); 
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--glass-border); 
-            border-radius: 20px; 
+            border-radius: 24px; 
             padding: 16px 18px 8px; 
             z-index: 200; 
             display: none; 
@@ -1037,13 +1035,16 @@
             .install-title { font-size: 11px; }
             .install-sub { font-size: 9px; }
             .install-action-btn { padding: 6px 12px; font-size: 10px; }
-            .glass-pill { padding: 14px 16px; gap: 10px; border-radius: 24px; }
-            #artwork { width: 44px; height: 44px; }
-            .track-name { font-size: 14px; }
+            
+            .liquid-player-window { padding: 14px 16px; gap: 10px; border-radius: 26px; }
+            #artwork { width: 42px; height: 42px; }
+            .track-name { font-size: 13.5px; }
             .track-artist { font-size: 11px; }
-            .btn-wrap { gap: 4px; }
-            .nav-btn { width: 28px; height: 28px; font-size: 12px; }
-            .play-btn { width: 40px; height: 40px; font-size: 14px; }
+
+            .nav-btn { width: 32px; height: 32px; font-size: 13px; }
+            .play-btn { width: 42px; height: 42px; font-size: 15px; }
+            .controls-left, .controls-right, .controls-center { gap: 3px; }
+            
             .time-label { font-size: 10px; }
             .list-item { font-size: 13px; padding: 8px; }
             .drawer { max-height: 48vh; padding: 14px 14px 10px; }
@@ -1069,7 +1070,7 @@
 </head>
 <body>
 
-    <!-- Crisp Animated App Launch Splash (Shows on Standalone App Open) -->
+    <!-- Crisp Animated App Launch Splash -->
     <div id="pwa-splash">
         <div class="splash-icon-wrapper">
             <div class="splash-glow-ring"></div>
@@ -1089,41 +1090,6 @@
             <span id="status-text">Loading Engine...</span>
         </div>
         <div class="header-actions">
-            <!-- Sleep Timer Toggle Button -->
-            <div class="ambient-container">
-                <button id="timer-btn" class="header-icon-btn" onclick="toggleTimerPopover(event)" title="Sleep Timer">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <div class="header-popover" id="timer-popover">
-                    <span class="popover-header">Sleep Timer</span>
-                    <div class="timer-options">
-                        <button class="timer-btn" onclick="setSleepTimer(15)">15 min</button>
-                        <button class="timer-btn" onclick="setSleepTimer(30)">30 min</button>
-                        <button class="timer-btn" onclick="setSleepTimer(45)">45 min</button>
-                        <button class="timer-btn" onclick="setSleepTimer(60)">60 min</button>
-                    </div>
-                    <button class="timer-btn" style="width:100%; margin-top:4px;" onclick="setSleepTimer(0)">Turn Off</button>
-                </div>
-            </div>
-
-            <!-- Ambient Nature Mixer Toggle Button -->
-            <div class="ambient-container">
-                <button id="ambient-btn" class="header-icon-btn" onclick="toggleAmbientPopover(event)" title="Lo-Fi Nature Mixer">
-                    <i class="fas fa-cloud-rain"></i>
-                </button>
-                <div class="header-popover" id="ambient-popover">
-                    <span class="popover-header">Lo-Fi Nature Layer</span>
-                    <div class="ambient-item">
-                        <span>🌧️ Gentle Rain</span>
-                        <button id="rain-btn" class="ambient-btn" onclick="toggleRain()">OFF</button>
-                    </div>
-                    <div class="ambient-item">
-                        <span>📻 Vinyl Crackle</span>
-                        <button id="vinyl-btn" class="ambient-btn" onclick="toggleVinyl()">OFF</button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Desktop Header Install Button -->
             <button id="pwa-header-install-btn" class="header-install-btn" onclick="triggerPWAInstall()">INSTALL</button>
             <button id="playlist-toggle-btn" class="playlist-btn" onclick="toggleDrawer(event)">PLAYLIST</button>
@@ -1152,7 +1118,7 @@
                 <div class="install-brand">
                     <img src="logo.svg?v=6" alt="Logo" class="install-icon"/>
                     <div class="install-text">
-                        <span class="install-title">Santali Retro</span>
+                        <span class="install-title">Add Santali Retro to home screen</span>
                         <span class="install-sub">Listen uninterrupted</span>
                     </div>
                 </div>
@@ -1179,7 +1145,7 @@
         </div>
     </footer>
 
-    <!-- Floating Player Bar Container with Dynamic Glow -->
+    <!-- SINGLE APPLE LIQUID GLASS FLOATING PLAYER SYSTEM -->
     <div class="player-bar" id="player-bar">
         <div class="player-ambient-glow" id="player-glow"></div>
         
@@ -1192,9 +1158,11 @@
             <div class="queue-scroll-container" id="song-list"></div>
         </div>
 
-        <div class="glass-pill" id="pill-card">
-            <!-- Top Controls Row -->
-            <div class="player-row-top">
+        <!-- UNIFIED LIQUID GLASS WINDOW -->
+        <div class="liquid-player-window" id="player-window">
+            
+            <!-- 1. Metadata Top Row (Artwork, Info & Favorite Button) -->
+            <div class="player-meta-row">
                 <img id="artwork" src="desktop_bg.webp" alt="Artwork"/>
                 
                 <div class="track-meta">
@@ -1206,35 +1174,75 @@
                     <p id="artist-name" class="track-artist">Click ▶ PLAY to start</p>
                 </div>
 
-                <div class="btn-wrap">
-                    <!-- Favorite / Bookmark Button -->
-                    <button class="nav-btn like-btn" id="like-btn" onclick="toggleFavorite()" title="Favorite Song">
-                        <i class="far fa-heart" id="like-icon"></i>
-                    </button>
-
-                    <!-- Shuffle Toggle Button -->
-                    <button class="nav-btn" id="shuffle-btn" onclick="toggleShuffle()" title="Shuffle (Key: S)">
-                        <i class="fas fa-shuffle"></i>
-                    </button>
-
-                    <button class="nav-btn" onclick="prevTrack()" title="Previous (Key: P)"><i class="fas fa-backward"></i></button>
-                    <button class="play-btn" id="play-btn" onclick="togglePlay()" title="Play / Pause (Key: Space)"><i id="play-icon" class="fas fa-play"></i></button>
-                    <button class="nav-btn" onclick="nextTrack()" title="Next (Key: N)"><i class="fas fa-forward"></i></button>
-                    
-                    <div class="vol-container">
-                        <button class="nav-btn" onclick="toggleVolPopover(event)" title="Volume (Key: M)"><i id="vol-icon" class="fas fa-volume-high"></i></button>
-                        <div class="vol-popover" id="vol-popover">
-                            <input type="range" id="vol-slider" class="vol-slider" min="0" max="100" value="100" oninput="setVolume(this.value)">
-                        </div>
-                    </div>
-                </div>
+                <!-- Favorite / Bookmark Button -->
+                <button class="nav-btn like-btn" id="like-btn" onclick="toggleFavorite()" title="Favorite Song">
+                    <i class="far fa-heart" id="like-icon"></i>
+                </button>
             </div>
 
-            <!-- Bottom Seek Row -->
+            <!-- 2. Integrated Scrubber / Seek Bar -->
             <div class="seek-container">
                 <span class="time-label" id="curr">0:00</span>
                 <input type="range" id="seek" value="0" min="0" max="100" class="slider">
                 <span class="time-label" id="total">0:00</span>
+            </div>
+
+            <!-- 3. Standard Clean Controls Deck -->
+            <div class="controls-row">
+                <!-- Left Utilities (Shuffle, Sleep Timer, Rain Layer) -->
+                <div class="controls-left">
+                    <button class="nav-btn" id="shuffle-btn" onclick="toggleShuffle()" title="Shuffle (Key: S)">
+                        <i class="fas fa-shuffle"></i>
+                    </button>
+
+                    <div style="position:relative;">
+                        <button class="nav-btn" id="timer-btn" onclick="toggleTimerPopover(event)" title="Sleep Timer">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <div class="deck-popover" id="timer-popover" style="left:0;">
+                            <span class="popover-header">Sleep Timer</span>
+                            <div class="timer-options">
+                                <button class="timer-btn" id="tbtn-15" onclick="setSleepTimer(15)">15 min</button>
+                                <button class="timer-btn" id="tbtn-30" onclick="setSleepTimer(30)">30 min</button>
+                                <button class="timer-btn" id="tbtn-45" onclick="setSleepTimer(45)">45 min</button>
+                                <button class="timer-btn" id="tbtn-60" onclick="setSleepTimer(60)">60 min</button>
+                            </div>
+                            <button class="timer-btn" style="width:100%; margin-top:4px;" onclick="setSleepTimer(0)">Turn Off</button>
+                        </div>
+                    </div>
+
+                    <div style="position:relative;">
+                        <button class="nav-btn" id="ambient-btn" onclick="toggleAmbientPopover(event)" title="Lo-Fi Nature Mixer">
+                            <i class="fas fa-cloud-rain"></i>
+                        </button>
+                        <div class="deck-popover" id="ambient-popover" style="left:0;">
+                            <span class="popover-header">Lo-Fi Nature</span>
+                            <div class="ambient-item">
+                                <span>🌧️ Rain</span>
+                                <button id="rain-btn" class="ambient-btn" onclick="toggleRain()">OFF</button>
+                            </div>
+                            <div class="ambient-item">
+                                <span>📻 Vinyl</span>
+                                <button id="vinyl-btn" class="ambient-btn" onclick="toggleVinyl()">OFF</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center Core Playback (Prev, Play/Pause, Next) -->
+                <div class="controls-center">
+                    <button class="nav-btn" onclick="prevTrack()" title="Previous (Key: P)"><i class="fas fa-backward"></i></button>
+                    <button class="play-btn" id="play-btn" onclick="togglePlay()" title="Play / Pause (Key: Space)"><i id="play-icon" class="fas fa-play"></i></button>
+                    <button class="nav-btn" onclick="nextTrack()" title="Next (Key: N)"><i class="fas fa-forward"></i></button>
+                </div>
+
+                <!-- Right Utility (Volume with Upward Popover) -->
+                <div class="controls-right" style="position:relative;">
+                    <button class="nav-btn" onclick="toggleVolPopover(event)" title="Volume (Key: M)"><i id="vol-icon" class="fas fa-volume-high"></i></button>
+                    <div class="deck-popover vol-popover-deck" id="vol-popover">
+                        <input type="range" id="vol-slider" class="vol-slider" min="0" max="100" value="100" oninput="setVolume(this.value)">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1267,7 +1275,7 @@
         let rainNode = null;
         let vinylNode = null;
 
-        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn, pwaInstallBanner, pwaHeaderInstallBtn, queueHeader, volIcon, volPopover, shuffleBtn, likeIcon, likeBtn, playerGlow, timerPopover, ambientPopover, splashEl;
+        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, playerWindow, playlistToggleBtn, pwaInstallBanner, pwaHeaderInstallBtn, queueHeader, volIcon, volPopover, shuffleBtn, likeIcon, likeBtn, playerGlow, timerPopover, ambientPopover, splashEl;
 
         document.addEventListener('DOMContentLoaded', () => {
             splashEl = document.getElementById('pwa-splash');
@@ -1280,7 +1288,7 @@
             currTime = document.getElementById('curr');
             totalTime = document.getElementById('total');
             artwork = document.getElementById('artwork');
-            pillCard = document.getElementById('pill-card');
+            playerWindow = document.getElementById('player-window');
             playlistToggleBtn = document.getElementById('playlist-toggle-btn');
             pwaInstallBanner = document.getElementById('pwa-install-banner');
             pwaHeaderInstallBtn = document.getElementById('pwa-header-install-btn');
@@ -1294,12 +1302,10 @@
             timerPopover = document.getElementById('timer-popover');
             ambientPopover = document.getElementById('ambient-popover');
 
-            // Handle PWA Launch Splash Screen Dismissal
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (isStandalone) {
                 setTimeout(() => dismissSplash(), 1600);
             } else {
-                // In standard browser tabs, fade out quickly
                 setTimeout(() => dismissSplash(), 400);
             }
 
@@ -1326,8 +1332,9 @@
 
             window.addEventListener('keydown', handleKeyboardShortcuts);
 
+            // Close popovers on outside click
             document.addEventListener('click', (e) => {
-                if (!e.target.closest('.ambient-container') && !e.target.closest('.vol-container')) {
+                if (!e.target.closest('.controls-row')) {
                     closeAllPopovers();
                 }
             });
@@ -1343,9 +1350,7 @@
             if (volPopover) volPopover.style.display = 'none';
         }
 
-        /* =========================================
-           DESKTOP KEYBOARD SHORTCUTS
-           ========================================= */
+        /* DESKTOP KEYBOARD SHORTCUTS */
         function handleKeyboardShortcuts(e) {
             if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
 
@@ -1380,9 +1385,7 @@
             }
         }
 
-        /* =========================================
-           PWA SMART INSTALLATION LOGIC
-           ========================================= */
+        /* PWA SMART INSTALLATION LOGIC */
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -1414,9 +1417,7 @@
             deferredPrompt = null;
         });
 
-        /* =========================================
-           FAVORITES / BOOKMARKING
-           ========================================= */
+        /* FAVORITES / BOOKMARKING */
         function toggleFavorite() {
             if (!player || typeof player.getVideoData !== 'function') return;
             const videoUrl = player.getVideoUrl();
@@ -1446,9 +1447,7 @@
             }
         }
 
-        /* =========================================
-           SLEEP TIMER WITH SMOOTH FADEOUT
-           ========================================= */
+        /* SLEEP TIMER WITH PERSISTENT BUTTON HIGHLIGHT */
         function toggleTimerPopover(e) {
             if (e) e.stopPropagation();
             const isOpen = timerPopover && timerPopover.style.display === 'flex';
@@ -1461,11 +1460,12 @@
             sleepTimerMinutes = minutes;
             const timerBtn = document.getElementById('timer-btn');
             
-            document.querySelectorAll('.timer-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.timer-btn').forEach(btn => btn.classList.remove('active-timer'));
 
             if (minutes > 0) {
+                const activeBtn = document.getElementById(`tbtn-${minutes}`);
+                if (activeBtn) activeBtn.classList.add('active-timer');
                 if (timerBtn) timerBtn.classList.add('active');
-                if (statusText) statusText.textContent = `Timer: ${minutes}m`;
                 
                 sleepTimerTimeout = setTimeout(() => {
                     let vol = player ? player.getVolume() : 100;
@@ -1482,14 +1482,11 @@
                 }, minutes * 60 * 1000);
             } else {
                 if (timerBtn) timerBtn.classList.remove('active');
-                if (statusText) statusText.textContent = 'Timer off';
             }
             closeAllPopovers();
         }
 
-        /* =========================================
-           PROCEDURAL WEB AUDIO LO-FI NATURE SYNTH
-           ========================================= */
+        /* PROCEDURAL LO-FI NATURE SYNTH */
         function initAudioCtx() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1566,21 +1563,16 @@
             }
         }
 
-        /* =========================================
-           SHUFFLE MODE
-           ========================================= */
+        /* SHUFFLE MODE */
         function toggleShuffle() {
             isShuffle = !isShuffle;
             if (shuffleBtn) {
                 if (isShuffle) shuffleBtn.classList.add('active');
                 else shuffleBtn.classList.remove('active');
             }
-            if (statusText) statusText.textContent = isShuffle ? 'Shuffle Enabled' : 'Shuffle Disabled';
         }
 
-        /* =========================================
-           NATIVE MEDIA-SESSION LOCK SCREEN API
-           ========================================= */
+        /* NATIVE MEDIA-SESSION LOCK SCREEN API */
         function syncMediaSession(title, artist, artworkUrl) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
@@ -1664,14 +1656,14 @@
                 loadRetryCount = 0;
                 if (playIcon) playIcon.className = 'fas fa-pause';
                 if (playBtn) playBtn.classList.add('is-playing');
-                if (pillCard) pillCard.classList.add('playing');
+                if (playerWindow) playerWindow.classList.add('playing');
                 if (statusText) statusText.textContent = 'Now Playing';
                 updateMetadata();
             } else if (event.data === YT.PlayerState.PAUSED) {
                 isPlaying = false;
                 if (playIcon) playIcon.className = 'fas fa-play';
                 if (playBtn) playBtn.classList.remove('is-playing');
-                if (pillCard) pillCard.classList.remove('playing');
+                if (playerWindow) playerWindow.classList.remove('playing');
                 if (statusText) statusText.textContent = 'Paused';
             } else if (event.data === YT.PlayerState.BUFFERING) {
                 if (hasStartedPlayback && statusText) {
@@ -1889,10 +1881,8 @@
                     }
                     player.playVideoAt(randomIdx);
                 } else if (currIdx >= totalTracks - 1) {
-                    if (statusText) statusText.textContent = 'Looping to Start...';
                     player.playVideoAt(0);
                 } else {
-                    if (statusText) statusText.textContent = 'Loading Next...';
                     player.nextVideo();
                 }
                 setTimeout(() => updateMetadata(), 300);
@@ -1903,7 +1893,6 @@
             if (player && typeof player.previousVideo === 'function') {
                 loadRetryCount = 0;
                 hasStartedPlayback = true;
-                if (statusText) statusText.textContent = 'Loading Prev...';
                 player.previousVideo();
                 setTimeout(() => updateMetadata(), 300);
             }
