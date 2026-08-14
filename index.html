@@ -466,7 +466,7 @@
             z-index: 300;
         }
 
-        /* STATIC SUBTLE NATURAL AMBIENT GLOW */
+        /* STATIC SUBTLE NATURAL AMBIENT GLOW (NON-ANIMATED) */
         .player-ambient-glow {
             position: absolute;
             inset: -14px -10px;
@@ -1367,7 +1367,6 @@
                 }
             });
 
-            // Background & Visibility Management for Uninterrupted Playback
             document.addEventListener('visibilitychange', async () => {
                 if (!document.hidden) {
                     if (isPlaying && player && typeof player.playVideo === 'function') {
@@ -1393,7 +1392,6 @@
             });
         });
 
-        /* SCREEN WAKE LOCK API (Prevents mobile background suspension) */
         async function requestWakeLock() {
             if ('wakeLock' in navigator && isPlaying) {
                 try {
@@ -1424,7 +1422,6 @@
             if (volPopover) volPopover.style.display = 'none';
         }
 
-        /* REAL-TIME COVER ART COLOR EXTRACTION */
         function extractCoverArtColor(imgUrl) {
             const img = new Image();
             img.crossOrigin = 'Anonymous';
@@ -1693,7 +1690,6 @@
             }
         }
 
-        /* NATIVE MEDIA-SESSION LOCK SCREEN API (Guarantees Background Playback) */
         function syncMediaSession(title, artist, artworkUrl) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
