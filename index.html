@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <title>Santali Retro — Enjoy Santali Old Songs</title>
     
+    <!-- PWA Manifest & App Configuration -->
+    <link rel="manifest" href="manifest.json"/>
+    <meta name="theme-color" content="#0c0c0c"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="apple-mobile-web-app-title" content="Santali Retro"/>
+
     <!-- Preload Background WebP Images for Instant Rendering -->
     <link rel="preload" as="image" href="desktop_bg.webp" media="(min-width: 769px)"/>
     <link rel="preload" as="image" href="mobile_bg.webp" media="(max-width: 768px)"/>
 
     <!-- Favicon (Full Edge-to-Edge SVG Favicon) -->
-    <link rel="icon" type="image/svg+xml" href="logo.svg?v=5" sizes="any"/>
-    <link rel="apple-touch-icon" href="logo.svg?v=4"/>
+    <link rel="icon" type="image/svg+xml" href="logo.svg?v=6" sizes="any"/>
+    <link rel="apple-touch-icon" href="logo.svg?v=6"/>
 
     <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@500;700;800&family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"/>
@@ -24,6 +31,7 @@
                ========================================= */
             --accent-gold: #C5A059;         /* Active highlights, seek fill, borders */
             --accent-live: #22c55e;         /* Live dot color */
+            --accent-heart: #f43f5e;        /* Favorite heart color */
             --text-cream: #f5f5f7;          /* Title & main text */
             --text-sand: #d1d1d1;           /* Subtitle & secondary text */
             --bg-shade: #0c0c0c;            /* Body background tint */
@@ -53,6 +61,80 @@
             display: flex;
             flex-direction: column;
             letter-spacing: -0.01em;
+        }
+
+        /* =========================================
+           CRISP ANIMATED APP LAUNCH SPLASH
+           ========================================= */
+        #pwa-splash {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0c0c0c;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s ease;
+            pointer-events: all;
+        }
+
+        #pwa-splash.splash-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-icon-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .splash-glow-ring {
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.4) 0%, rgba(197, 160, 89, 0) 70%);
+            border-radius: 50%;
+            animation: pulseSplashGlow 2.2s infinite ease-in-out;
+        }
+
+        .splash-logo {
+            width: 86px;
+            height: 86px;
+            object-fit: contain;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.85));
+            animation: splashLogoScale 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .splash-title {
+            font-family: 'Anek Devanagari', var(--apple-font);
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-cream);
+            letter-spacing: -0.01em;
+            opacity: 0;
+            animation: fadeInSub 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes splashLogoScale {
+            0% { transform: scale(0.75); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulseSplashGlow {
+            0%, 100% { transform: scale(0.9); opacity: 0.35; }
+            50% { transform: scale(1.4); opacity: 0.75; }
         }
 
         /* STATIC BACKDROP */
@@ -85,9 +167,14 @@
 
         /* HEADER & LIVE DOT */
         header {
-            position: relative; z-index: 20;
+            position: relative; z-index: 250;
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 24px;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .status { 
             display: flex; 
@@ -103,7 +190,7 @@
         .dot::after { content: ''; position: absolute; inset: 0; background: var(--accent-live); border-radius: 50%; animation: ping 1.5s infinite; }
         @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
 
-        .playlist-btn {
+        .playlist-btn, .header-install-btn, .header-icon-btn {
             background: var(--glass-bg); 
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -118,13 +205,32 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             font-family: var(--apple-font);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .playlist-btn:hover {
+
+        .header-icon-btn {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .header-icon-btn.active {
+            background: var(--accent-gold);
+            color: #000;
+            border-color: var(--accent-gold);
+        }
+
+        .header-install-btn {
+            display: none;
+            border-color: rgba(197, 160, 89, 0.35);
+        }
+        .header-install-btn:hover, .playlist-btn:hover, .header-icon-btn:hover {
             border-color: var(--accent-gold);
             color: var(--accent-gold);
             transform: scale(1.05);
         }
-        .playlist-btn:active {
+        .header-install-btn:active, .playlist-btn:active, .header-icon-btn:active {
             transform: scale(0.95);
         }
         .playlist-btn.active {
@@ -132,6 +238,102 @@
             color: #000;
             border-color: var(--accent-gold);
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
+        }
+
+        /* HEADER DROPDOWN POPOVERS (Opens Downwards) */
+        .ambient-container { position: relative; }
+
+        .header-popover {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 14px;
+            border-radius: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+            animation: popDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            z-index: 400;
+            min-width: 155px;
+        }
+
+        @keyframes popDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .popover-header {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(245,245,247,0.6);
+            width: 100%;
+            text-align: center;
+        }
+
+        .ambient-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+            font-size: 11px;
+            color: var(--text-cream);
+        }
+
+        .ambient-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-sand);
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .ambient-btn.active {
+            background: var(--accent-gold);
+            color: #000;
+            border-color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        .timer-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .timer-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-sand);
+            padding: 6px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .timer-btn:hover {
+            color: var(--text-cream);
+            border-color: var(--accent-gold);
+        }
+
+        .timer-btn.active {
+            background: var(--accent-gold);
+            color: #000;
+            border-color: var(--accent-gold);
+            font-weight: 700;
         }
 
         /* ANIMATED HERO SECTION */
@@ -197,11 +399,18 @@
             to { opacity: 0.85; transform: translateY(0); }
         }
 
+        .hero-socials {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
         .insta-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            margin-top: 14px;
             color: #dc2743;
             text-decoration: none;
             font-size: 12px;
@@ -233,11 +442,124 @@
             box-shadow: 0 4px 15px rgba(225, 48, 108, 0.25);
         }
 
-        .insta-link:hover i.fa-instagram {
-            transform: scale(1.2) rotate(-6deg);
+        /* MOBILE FROSTED GLASS INSTALL BANNER */
+        .install-banner-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+            animation: fadeInSub 1s ease forwards;
         }
 
-        /* FLOATING PLAYER CONTAINER */
+        .install-card {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(18, 16, 14, 0.65) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 8px 10px 8px 14px;
+            border-radius: 99px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .install-card:hover {
+            border-color: rgba(197, 160, 89, 0.4);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55), 0 0 20px rgba(197, 160, 89, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .install-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .install-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+        }
+
+        .install-text {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .install-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-cream);
+            letter-spacing: -0.01em;
+            line-height: 1.15;
+        }
+
+        .install-sub {
+            font-size: 10px;
+            color: var(--text-sand);
+            opacity: 0.65;
+            font-weight: 500;
+        }
+
+        .install-action-btn {
+            background: var(--text-cream);
+            color: var(--bg-shade);
+            border: none;
+            padding: 7px 16px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .install-action-btn i { font-size: 10px; }
+
+        .install-action-btn:hover {
+            background: var(--accent-gold);
+            color: #000;
+            transform: scale(1.06);
+            box-shadow: 0 0 14px rgba(197, 160, 89, 0.5);
+        }
+
+        .install-action-btn:active { transform: scale(0.94); }
+
+        .install-close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 13px;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .install-close-btn:hover {
+            color: var(--text-cream);
+            transform: scale(1.15);
+        }
+
+        @media (min-width: 769px) {
+            .install-banner-wrap { display: none !important; }
+        }
+
+        @media (max-width: 768px) {
+            .header-install-btn { display: none !important; }
+        }
+
+        /* AMBIENT GLOW & FLOATING PLAYER CONTAINER */
         .player-bar {
             position: fixed; 
             bottom: max(20px, env(safe-area-inset-bottom)); 
@@ -245,6 +567,18 @@
             transform: translateX(-50%);
             width: min(92%, 640px); 
             z-index: 300;
+        }
+
+        .player-ambient-glow {
+            position: absolute;
+            inset: -15px -10px;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 40px;
+            filter: blur(20px);
+            z-index: -1;
+            opacity: 0.6;
+            transition: background 1.5s ease, opacity 0.8s ease;
+            pointer-events: none;
         }
 
         .glass-pill {
@@ -264,7 +598,7 @@
         .player-row-top {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
             width: 100%;
         }
 
@@ -352,16 +686,16 @@
             color: var(--text-cream);
         }
 
-        .btn-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .btn-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         
         .nav-btn { 
             background: none; 
             border: none; 
             color: var(--text-sand); 
             cursor: pointer; 
-            font-size: 15px; 
-            width: 34px;
-            height: 34px;
+            font-size: 14px; 
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -375,22 +709,35 @@
             transform: scale(1.2);
         }
 
-        .nav-btn:active {
-            transform: scale(0.88);
+        .nav-btn:active { transform: scale(0.88); }
+
+        .nav-btn.active {
+            color: var(--accent-gold);
+            background: rgba(197, 160, 89, 0.15);
+        }
+
+        .like-btn.liked {
+            color: var(--accent-heart) !important;
+            animation: heartBeat 0.35s ease;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.35); }
         }
 
         .play-btn { 
             background: var(--text-cream); 
             color: var(--bg-shade); 
-            width: 48px; 
-            height: 48px; 
+            width: 46px; 
+            height: 46px; 
             border-radius: 50%; 
             border: none; 
             cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-size: 18px; 
+            font-size: 17px; 
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, box-shadow 0.3s;
             position: relative;
         }
@@ -401,9 +748,7 @@
             box-shadow: 0 0 22px rgba(245,245,247,0.45);
         }
 
-        .play-btn:active {
-            transform: scale(0.90);
-        }
+        .play-btn:active { transform: scale(0.90); }
 
         .play-btn.is-playing {
             animation: pulseGlow 2s infinite alternate ease-in-out;
@@ -414,7 +759,7 @@
             100% { box-shadow: 0 0 18px rgba(197, 160, 89, 0.6); }
         }
 
-        /* VOLUME CONTROLS */
+        /* VOLUME POPOVER (Bottom Upwards) */
         .vol-container { position: relative; }
 
         .vol-popover {
@@ -524,9 +869,7 @@
             padding-bottom: 24px;
         }
 
-        .queue-scroll-container::-webkit-scrollbar {
-            width: 4px;
-        }
+        .queue-scroll-container::-webkit-scrollbar { width: 4px; }
         .queue-scroll-container::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
@@ -568,10 +911,7 @@
             color: var(--accent-gold);
         }
 
-        .track-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .track-info { flex: 1; min-width: 0; }
 
         .track-info .q-title {
             font-size: 13px;
@@ -608,6 +948,12 @@
             content: "•";
             margin-right: 6px;
             opacity: 0.5;
+        }
+
+        .q-heart-icon {
+            font-size: 11px;
+            color: var(--accent-heart);
+            margin-left: 4px;
         }
 
         /* FOOTER */
@@ -680,22 +1026,24 @@
 
         /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .footer-content {
-                width: 80%;
-            }
+            .footer-content { width: 80%; }
         }
 
         @media (max-width: 480px) {
             header { padding: 16px 20px; }
             .hero { margin-top: 3vh; }
             .hero p { letter-spacing: 0.2em; font-size: 9px; }
+            .install-card { padding: 6px 10px 6px 12px; gap: 8px; }
+            .install-title { font-size: 11px; }
+            .install-sub { font-size: 9px; }
+            .install-action-btn { padding: 6px 12px; font-size: 10px; }
             .glass-pill { padding: 14px 16px; gap: 10px; border-radius: 24px; }
             #artwork { width: 44px; height: 44px; }
             .track-name { font-size: 14px; }
             .track-artist { font-size: 11px; }
             .btn-wrap { gap: 4px; }
-            .nav-btn { width: 30px; height: 32px; font-size: 13px; }
-            .play-btn { width: 42px; height: 42px; font-size: 15px; }
+            .nav-btn { width: 28px; height: 28px; font-size: 12px; }
+            .play-btn { width: 40px; height: 40px; font-size: 14px; }
             .time-label { font-size: 10px; }
             .list-item { font-size: 13px; padding: 8px; }
             .drawer { max-height: 48vh; padding: 14px 14px 10px; }
@@ -721,6 +1069,15 @@
 </head>
 <body>
 
+    <!-- Crisp Animated App Launch Splash (Shows on Standalone App Open) -->
+    <div id="pwa-splash">
+        <div class="splash-icon-wrapper">
+            <div class="splash-glow-ring"></div>
+            <img src="logo.svg?v=6" alt="Santali Retro" class="splash-logo" width="86" height="86"/>
+        </div>
+        <span class="splash-title">ᱥᱟᱱᱛᱟᱲᱤ ᱨᱮᱴᱨᱳ</span>
+    </div>
+
     <!-- Static Backdrop Layer -->
     <div class="fixed-backdrop">
         <div class="backdrop-img"></div>
@@ -731,7 +1088,46 @@
             <div class="dot"></div>
             <span id="status-text">Loading Engine...</span>
         </div>
-        <button id="playlist-toggle-btn" class="playlist-btn" onclick="toggleDrawer()">PLAYLIST</button>
+        <div class="header-actions">
+            <!-- Sleep Timer Toggle Button -->
+            <div class="ambient-container">
+                <button id="timer-btn" class="header-icon-btn" onclick="toggleTimerPopover(event)" title="Sleep Timer">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="header-popover" id="timer-popover">
+                    <span class="popover-header">Sleep Timer</span>
+                    <div class="timer-options">
+                        <button class="timer-btn" onclick="setSleepTimer(15)">15 min</button>
+                        <button class="timer-btn" onclick="setSleepTimer(30)">30 min</button>
+                        <button class="timer-btn" onclick="setSleepTimer(45)">45 min</button>
+                        <button class="timer-btn" onclick="setSleepTimer(60)">60 min</button>
+                    </div>
+                    <button class="timer-btn" style="width:100%; margin-top:4px;" onclick="setSleepTimer(0)">Turn Off</button>
+                </div>
+            </div>
+
+            <!-- Ambient Nature Mixer Toggle Button -->
+            <div class="ambient-container">
+                <button id="ambient-btn" class="header-icon-btn" onclick="toggleAmbientPopover(event)" title="Lo-Fi Nature Mixer">
+                    <i class="fas fa-cloud-rain"></i>
+                </button>
+                <div class="header-popover" id="ambient-popover">
+                    <span class="popover-header">Lo-Fi Nature Layer</span>
+                    <div class="ambient-item">
+                        <span>🌧️ Gentle Rain</span>
+                        <button id="rain-btn" class="ambient-btn" onclick="toggleRain()">OFF</button>
+                    </div>
+                    <div class="ambient-item">
+                        <span>📻 Vinyl Crackle</span>
+                        <button id="vinyl-btn" class="ambient-btn" onclick="toggleVinyl()">OFF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Header Install Button -->
+            <button id="pwa-header-install-btn" class="header-install-btn" onclick="triggerPWAInstall()">INSTALL</button>
+            <button id="playlist-toggle-btn" class="playlist-btn" onclick="toggleDrawer(event)">PLAYLIST</button>
+        </div>
     </header>
 
     <main class="hero">
@@ -742,17 +1138,40 @@
             </h1>
         </div>
         <p>Santali Retro · Those Were the days</p>
-        <a href="https://instagram.com/nyxhasda" target="_blank" rel="noopener noreferrer" class="insta-link">
-            <i class="fab fa-instagram"></i>
-            <span>@nyxhasda</span>
-        </a>
+        
+        <div class="hero-socials">
+            <a href="https://instagram.com/nyxhasda" target="_blank" rel="noopener noreferrer" class="insta-link">
+                <i class="fab fa-instagram"></i>
+                <span>@nyxhasda</span>
+            </a>
+        </div>
+
+        <!-- Mobile Floating Glass Install Badge (Max-width 768px) -->
+        <div class="install-banner-wrap">
+            <div class="install-card" id="pwa-install-banner">
+                <div class="install-brand">
+                    <img src="logo.svg?v=6" alt="Logo" class="install-icon"/>
+                    <div class="install-text">
+                        <span class="install-title">Santali Retro</span>
+                        <span class="install-sub">Listen uninterrupted</span>
+                    </div>
+                </div>
+                <button class="install-action-btn" onclick="triggerPWAInstall()">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>GET</span>
+                </button>
+                <button class="install-close-btn" onclick="dismissPWAInstall()" title="Dismiss">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
     </main>
 
     <!-- Footer Below Viewport -->
     <footer>
         <div class="footer-content">
             <div class="footer-brand">
-                <img src="logo.svg?v=4" alt="Jharna Are Logo" class="footer-logo" width="64" height="64"/>
+                <img src="logo.svg?v=6" alt="Jharna Are Logo" class="footer-logo" width="64" height="64"/>
                 <span class="footer-title">ᱥᱟᱱᱛᱟᱲᱤ ᱨᱮᱴᱨᱳ</span>
             </div>
             <p>All songs played here are embedded directly from YouTube. We do not host or store any audio or video files on our servers.</p>
@@ -760,14 +1179,15 @@
         </div>
     </footer>
 
-    <!-- Floating Player Bar Container -->
+    <!-- Floating Player Bar Container with Dynamic Glow -->
     <div class="player-bar" id="player-bar">
+        <div class="player-ambient-glow" id="player-glow"></div>
         
         <!-- Live Queue Drawer -->
         <div class="drawer" id="drawer">
             <div class="drawer-header">
                 <h3 id="queue-count-header">PLAYLIST QUEUE</h3>
-                <button class="close-btn" onclick="toggleDrawer()"><i class="fas fa-times"></i></button>
+                <button class="close-btn" onclick="toggleDrawer(event)"><i class="fas fa-times"></i></button>
             </div>
             <div class="queue-scroll-container" id="song-list"></div>
         </div>
@@ -787,12 +1207,22 @@
                 </div>
 
                 <div class="btn-wrap">
-                    <button class="nav-btn" onclick="prevTrack()" title="Previous"><i class="fas fa-backward"></i></button>
-                    <button class="play-btn" id="play-btn" onclick="togglePlay()" title="Play / Pause"><i id="play-icon" class="fas fa-play"></i></button>
-                    <button class="nav-btn" onclick="nextTrack()" title="Next"><i class="fas fa-forward"></i></button>
+                    <!-- Favorite / Bookmark Button -->
+                    <button class="nav-btn like-btn" id="like-btn" onclick="toggleFavorite()" title="Favorite Song">
+                        <i class="far fa-heart" id="like-icon"></i>
+                    </button>
+
+                    <!-- Shuffle Toggle Button -->
+                    <button class="nav-btn" id="shuffle-btn" onclick="toggleShuffle()" title="Shuffle (Key: S)">
+                        <i class="fas fa-shuffle"></i>
+                    </button>
+
+                    <button class="nav-btn" onclick="prevTrack()" title="Previous (Key: P)"><i class="fas fa-backward"></i></button>
+                    <button class="play-btn" id="play-btn" onclick="togglePlay()" title="Play / Pause (Key: Space)"><i id="play-icon" class="fas fa-play"></i></button>
+                    <button class="nav-btn" onclick="nextTrack()" title="Next (Key: N)"><i class="fas fa-forward"></i></button>
                     
                     <div class="vol-container">
-                        <button class="nav-btn" onclick="toggleVolPopover()" title="Volume"><i id="vol-icon" class="fas fa-volume-high"></i></button>
+                        <button class="nav-btn" onclick="toggleVolPopover(event)" title="Volume (Key: M)"><i id="vol-icon" class="fas fa-volume-high"></i></button>
                         <div class="vol-popover" id="vol-popover">
                             <input type="range" id="vol-slider" class="vol-slider" min="0" max="100" value="100" oninput="setVolume(this.value)">
                         </div>
@@ -819,17 +1249,28 @@
 
         let player = null;
         let isPlaying = false;
-        let hasStartedPlayback = false; // Flag to track if user ever pressed Play
+        let isShuffle = false;
+        let hasStartedPlayback = false;
         let syncTimer = null;
         let playlistMetadata = {};
+        let deferredPrompt = null;
         
-        // Buffering / Loading Retry Guard Counters
+        let sleepTimerTimeout = null;
+        let sleepTimerMinutes = 0;
+
+        let favorites = JSON.parse(localStorage.getItem('santali_favs') || '[]');
+
         let loadRetryCount = 0;
         const MAX_LOAD_RETRIES = 3;
 
-        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn, queueHeader, volIcon, volPopover;
+        let audioCtx = null;
+        let rainNode = null;
+        let vinylNode = null;
+
+        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, pillCard, playlistToggleBtn, pwaInstallBanner, pwaHeaderInstallBtn, queueHeader, volIcon, volPopover, shuffleBtn, likeIcon, likeBtn, playerGlow, timerPopover, ambientPopover, splashEl;
 
         document.addEventListener('DOMContentLoaded', () => {
+            splashEl = document.getElementById('pwa-splash');
             statusText = document.getElementById('status-text');
             titleEl = document.getElementById('song-title');
             artistEl = document.getElementById('artist-name');
@@ -841,9 +1282,26 @@
             artwork = document.getElementById('artwork');
             pillCard = document.getElementById('pill-card');
             playlistToggleBtn = document.getElementById('playlist-toggle-btn');
+            pwaInstallBanner = document.getElementById('pwa-install-banner');
+            pwaHeaderInstallBtn = document.getElementById('pwa-header-install-btn');
             queueHeader = document.getElementById('queue-count-header');
             volIcon = document.getElementById('vol-icon');
             volPopover = document.getElementById('vol-popover');
+            shuffleBtn = document.getElementById('shuffle-btn');
+            likeIcon = document.getElementById('like-icon');
+            likeBtn = document.getElementById('like-btn');
+            playerGlow = document.getElementById('player-glow');
+            timerPopover = document.getElementById('timer-popover');
+            ambientPopover = document.getElementById('ambient-popover');
+
+            // Handle PWA Launch Splash Screen Dismissal
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (isStandalone) {
+                setTimeout(() => dismissSplash(), 1600);
+            } else {
+                // In standard browser tabs, fade out quickly
+                setTimeout(() => dismissSplash(), 400);
+            }
 
             seekSlider.addEventListener('input', (e) => {
                 if (player && typeof player.getDuration === 'function') {
@@ -856,13 +1314,295 @@
                 }
             });
 
-            // Re-trigger play state when returning to tab if player was active
             document.addEventListener('visibilitychange', () => {
                 if (!document.hidden && isPlaying && player && typeof player.playVideo === 'function') {
                     player.playVideo();
                 }
             });
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            }
+
+            window.addEventListener('keydown', handleKeyboardShortcuts);
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.ambient-container') && !e.target.closest('.vol-container')) {
+                    closeAllPopovers();
+                }
+            });
         });
+
+        function dismissSplash() {
+            if (splashEl) splashEl.classList.add('splash-hidden');
+        }
+
+        function closeAllPopovers() {
+            if (timerPopover) timerPopover.style.display = 'none';
+            if (ambientPopover) ambientPopover.style.display = 'none';
+            if (volPopover) volPopover.style.display = 'none';
+        }
+
+        /* =========================================
+           DESKTOP KEYBOARD SHORTCUTS
+           ========================================= */
+        function handleKeyboardShortcuts(e) {
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+            switch (e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    if (player && player.getCurrentTime) player.seekTo(Math.max(0, player.getCurrentTime() - 5));
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    if (player && player.getCurrentTime) player.seekTo(player.getCurrentTime() + 5);
+                    break;
+                case 'KeyN':
+                    nextTrack();
+                    break;
+                case 'KeyP':
+                    prevTrack();
+                    break;
+                case 'KeyM':
+                    if (player && player.isMuted) {
+                        if (player.isMuted()) player.unMute();
+                        else player.mute();
+                    }
+                    break;
+                case 'KeyS':
+                    toggleShuffle();
+                    break;
+            }
+        }
+
+        /* =========================================
+           PWA SMART INSTALLATION LOGIC
+           ========================================= */
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (!isStandalone) {
+                if (pwaInstallBanner) pwaInstallBanner.style.display = 'inline-flex';
+                if (pwaHeaderInstallBtn) pwaHeaderInstallBtn.style.display = 'inline-flex';
+            }
+        });
+
+        async function triggerPWAInstall() {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                if (pwaInstallBanner) pwaInstallBanner.style.display = 'none';
+                if (pwaHeaderInstallBtn) pwaHeaderInstallBtn.style.display = 'none';
+            }
+            deferredPrompt = null;
+        }
+
+        function dismissPWAInstall() {
+            if (pwaInstallBanner) pwaInstallBanner.style.display = 'none';
+        }
+
+        window.addEventListener('appinstalled', () => {
+            if (pwaInstallBanner) pwaInstallBanner.style.display = 'none';
+            if (pwaHeaderInstallBtn) pwaHeaderInstallBtn.style.display = 'none';
+            deferredPrompt = null;
+        });
+
+        /* =========================================
+           FAVORITES / BOOKMARKING
+           ========================================= */
+        function toggleFavorite() {
+            if (!player || typeof player.getVideoData !== 'function') return;
+            const videoUrl = player.getVideoUrl();
+            if (!videoUrl || !videoUrl.includes('v=')) return;
+            const vId = videoUrl.split('v=')[1].split('&')[0];
+
+            if (favorites.includes(vId)) {
+                favorites = favorites.filter(id => id !== vId);
+            } else {
+                favorites.push(vId);
+            }
+            localStorage.setItem('santali_favs', JSON.stringify(favorites));
+            updateFavoriteButton(vId);
+            renderQueueWithMetadata();
+        }
+
+        function updateFavoriteButton(vId) {
+            const isFav = favorites.includes(vId);
+            if (likeBtn && likeIcon) {
+                if (isFav) {
+                    likeBtn.classList.add('liked');
+                    likeIcon.className = 'fas fa-heart';
+                } else {
+                    likeBtn.classList.remove('liked');
+                    likeIcon.className = 'far fa-heart';
+                }
+            }
+        }
+
+        /* =========================================
+           SLEEP TIMER WITH SMOOTH FADEOUT
+           ========================================= */
+        function toggleTimerPopover(e) {
+            if (e) e.stopPropagation();
+            const isOpen = timerPopover && timerPopover.style.display === 'flex';
+            closeAllPopovers();
+            if (!isOpen && timerPopover) timerPopover.style.display = 'flex';
+        }
+
+        function setSleepTimer(minutes) {
+            clearTimeout(sleepTimerTimeout);
+            sleepTimerMinutes = minutes;
+            const timerBtn = document.getElementById('timer-btn');
+            
+            document.querySelectorAll('.timer-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (minutes > 0) {
+                if (timerBtn) timerBtn.classList.add('active');
+                if (statusText) statusText.textContent = `Timer: ${minutes}m`;
+                
+                sleepTimerTimeout = setTimeout(() => {
+                    let vol = player ? player.getVolume() : 100;
+                    const fade = setInterval(() => {
+                        vol -= 10;
+                        if (vol <= 0) {
+                            clearInterval(fade);
+                            if (player) player.pauseVideo();
+                            setSleepTimer(0);
+                        } else if (player) {
+                            player.setVolume(vol);
+                        }
+                    }, 400);
+                }, minutes * 60 * 1000);
+            } else {
+                if (timerBtn) timerBtn.classList.remove('active');
+                if (statusText) statusText.textContent = 'Timer off';
+            }
+            closeAllPopovers();
+        }
+
+        /* =========================================
+           PROCEDURAL WEB AUDIO LO-FI NATURE SYNTH
+           ========================================= */
+        function initAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleAmbientPopover(e) {
+            if (e) e.stopPropagation();
+            const isOpen = ambientPopover && ambientPopover.style.display === 'flex';
+            closeAllPopovers();
+            if (!isOpen && ambientPopover) ambientPopover.style.display = 'flex';
+        }
+
+        function toggleRain() {
+            initAudioCtx();
+            const btn = document.getElementById('rain-btn');
+            if (!rainNode) {
+                const bufferSize = audioCtx.sampleRate * 2;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                let b0 = 0, b1 = 0, b2 = 0;
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    b0 = 0.99886 * b0 + white * 0.0555179;
+                    b1 = 0.99332 * b1 + white * 0.0750759;
+                    b2 = 0.96900 * b2 + white * 0.1538520;
+                    data[i] = (b0 + b1 + b2) * 0.06;
+                }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                noise.loop = true;
+                const gain = audioCtx.createGain();
+                gain.gain.value = 0.35;
+                noise.connect(gain);
+                gain.connect(audioCtx.destination);
+                noise.start();
+                rainNode = { source: noise, gain: gain };
+                btn.textContent = 'ON';
+                btn.classList.add('active');
+            } else {
+                rainNode.source.stop();
+                rainNode = null;
+                btn.textContent = 'OFF';
+                btn.classList.remove('active');
+            }
+        }
+
+        function toggleVinyl() {
+            initAudioCtx();
+            const btn = document.getElementById('vinyl-btn');
+            if (!vinylNode) {
+                const bufferSize = audioCtx.sampleRate * 2;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() > 0.997 ? (Math.random() * 2 - 1) * 0.4 : 0);
+                }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                noise.loop = true;
+                const gain = audioCtx.createGain();
+                gain.gain.value = 0.4;
+                noise.connect(gain);
+                gain.connect(audioCtx.destination);
+                noise.start();
+                vinylNode = { source: noise, gain: gain };
+                btn.textContent = 'ON';
+                btn.classList.add('active');
+            } else {
+                vinylNode.source.stop();
+                vinylNode = null;
+                btn.textContent = 'OFF';
+                btn.classList.remove('active');
+            }
+        }
+
+        /* =========================================
+           SHUFFLE MODE
+           ========================================= */
+        function toggleShuffle() {
+            isShuffle = !isShuffle;
+            if (shuffleBtn) {
+                if (isShuffle) shuffleBtn.classList.add('active');
+                else shuffleBtn.classList.remove('active');
+            }
+            if (statusText) statusText.textContent = isShuffle ? 'Shuffle Enabled' : 'Shuffle Disabled';
+        }
+
+        /* =========================================
+           NATIVE MEDIA-SESSION LOCK SCREEN API
+           ========================================= */
+        function syncMediaSession(title, artist, artworkUrl) {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title,
+                    artist: artist,
+                    album: 'Santali Retro Radio',
+                    artwork: [
+                        { src: artworkUrl, sizes: '512x512', type: 'image/jpeg' }
+                    ]
+                });
+
+                navigator.mediaSession.setActionHandler('play', () => togglePlay());
+                navigator.mediaSession.setActionHandler('pause', () => togglePlay());
+                navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
+                navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
+                navigator.mediaSession.setActionHandler('seekto', (details) => {
+                    if (details.seekTime && player && player.seekTo) {
+                        player.seekTo(details.seekTime);
+                    }
+                });
+            }
+        }
 
         function updateSliderFill(percent) {
             if (seekSlider) {
@@ -920,8 +1660,8 @@
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.PLAYING) {
                 isPlaying = true;
-                hasStartedPlayback = true; // Mark playback as initiated by user
-                loadRetryCount = 0; // Reset retries on successful play
+                hasStartedPlayback = true;
+                loadRetryCount = 0;
                 if (playIcon) playIcon.className = 'fas fa-pause';
                 if (playBtn) playBtn.classList.add('is-playing');
                 if (pillCard) pillCard.classList.add('playing');
@@ -934,7 +1674,6 @@
                 if (pillCard) pillCard.classList.remove('playing');
                 if (statusText) statusText.textContent = 'Paused';
             } else if (event.data === YT.PlayerState.BUFFERING) {
-                // Ignore initial buffering event before playback is ever started
                 if (hasStartedPlayback && statusText) {
                     statusText.textContent = 'Buffering...';
                 }
@@ -943,13 +1682,7 @@
                 updateMetadata();
                 renderQueueWithMetadata();
             } else if (event.data === YT.PlayerState.ENDED) {
-                const currIdx = player.getPlaylistIndex();
-                const totalTracks = player.getPlaylist() ? player.getPlaylist().length : 0;
-                if (currIdx >= totalTracks - 1) {
-                    player.playVideoAt(0);
-                } else {
-                    nextTrack();
-                }
+                nextTrack();
             }
         }
 
@@ -985,12 +1718,12 @@
                     const data = player.getVideoData();
                     if (data && data.title) {
                         const rawTitle = data.title;
+                        const artist = data.author || 'Santali Artist';
                         
                         if (titleEl) {
                             titleEl.innerHTML = `${rawTitle} &nbsp;&nbsp;&bull;&nbsp;&nbsp; ${rawTitle} &nbsp;&nbsp;&bull;&nbsp;&nbsp;`;
                         }
-                        
-                        if (artistEl) artistEl.textContent = data.author || 'Santali Artist';
+                        if (artistEl) artistEl.textContent = artist;
 
                         if (statusText) {
                             if (isPlaying) {
@@ -1000,11 +1733,16 @@
                             }
                         }
 
+                        let artUrl = 'desktop_bg.webp';
                         const videoUrl = player.getVideoUrl();
                         if (videoUrl && videoUrl.includes('v=')) {
                             const vId = videoUrl.split('v=')[1].split('&')[0];
-                            if (artwork) artwork.src = `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
+                            artUrl = `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
+                            if (artwork) artwork.src = artUrl;
+                            updateFavoriteButton(vId);
                         }
+
+                        syncMediaSession(rawTitle, artist, artUrl);
 
                         if (totalTime) totalTime.textContent = formatTime(player.getDuration());
 
@@ -1037,16 +1775,24 @@
                 <div class="list-item" id="queue-item-${i}" onclick="player.playVideoAt(${i})">
                     <span class="track-num">${i + 1}</span>
                     <div class="track-info">
-                        <div class="q-title" id="q-title-${i}">Fetching title...</div>
+                        <div class="q-title" id="q-title-${i}">
+                            Fetching title...
+                        </div>
                         <div class="q-sub">
                             <span id="q-artist-${i}">Santali Radio</span>
                             <span class="q-duration" id="q-dur-${i}">--:--</span>
+                            <span id="q-fav-${i}"></span>
                         </div>
                     </div>
                 </div>
             `).join('');
 
             list.forEach((id, i) => {
+                const favTag = document.getElementById(`q-fav-${i}`);
+                if (favTag && favorites.includes(id)) {
+                    favTag.innerHTML = '<i class="fas fa-heart q-heart-icon"></i>';
+                }
+
                 if (playlistMetadata[id]) {
                     applyItemData(i, playlistMetadata[id]);
                 } else {
@@ -1133,10 +1879,16 @@
                 const playlist = player.getPlaylist();
                 const totalTracks = playlist ? playlist.length : 0;
                 
-                loadRetryCount = 0; // Reset retries on manual skip
+                loadRetryCount = 0;
                 hasStartedPlayback = true;
                 
-                if (currIdx >= totalTracks - 1) {
+                if (isShuffle && totalTracks > 1) {
+                    let randomIdx = currIdx;
+                    while (randomIdx === currIdx) {
+                        randomIdx = Math.floor(Math.random() * totalTracks);
+                    }
+                    player.playVideoAt(randomIdx);
+                } else if (currIdx >= totalTracks - 1) {
                     if (statusText) statusText.textContent = 'Looping to Start...';
                     player.playVideoAt(0);
                 } else {
@@ -1149,7 +1901,7 @@
 
         function prevTrack() {
             if (player && typeof player.previousVideo === 'function') {
-                loadRetryCount = 0; // Reset retries on manual skip
+                loadRetryCount = 0;
                 hasStartedPlayback = true;
                 if (statusText) statusText.textContent = 'Loading Prev...';
                 player.previousVideo();
@@ -1157,7 +1909,9 @@
             }
         }
 
-        function toggleDrawer() {
+        function toggleDrawer(e) {
+            if (e) e.stopPropagation();
+            closeAllPopovers();
             const d = document.getElementById('drawer');
             if (d) {
                 const isOpening = d.style.display !== 'block';
@@ -1176,9 +1930,12 @@
             }
         }
 
-        function toggleVolPopover() {
-            if (volPopover) {
-                volPopover.style.display = volPopover.style.display === 'flex' ? 'none' : 'flex';
+        function toggleVolPopover(e) {
+            if (e) e.stopPropagation();
+            const isOpen = volPopover && volPopover.style.display === 'flex';
+            closeAllPopovers();
+            if (!isOpen && volPopover) {
+                volPopover.style.display = 'flex';
             }
         }
 
