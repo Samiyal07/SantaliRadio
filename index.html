@@ -39,8 +39,8 @@
             --glass-border: rgba(255, 255, 255, 0.12); /* Border outline */
 
             /* Dynamic Ambient Glow Seed (Overridden via Canvas) */
-            --dynamic-glow-color: rgba(197, 160, 89, 0.65);
-            --dynamic-glow-secondary: rgba(220, 39, 67, 0.35);
+            --dynamic-glow-color: rgba(197, 160, 89, 0.70);
+            --dynamic-glow-secondary: rgba(220, 39, 67, 0.45);
 
             /* Typography Stack */
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -466,17 +466,36 @@
             z-index: 300;
         }
 
-        /* DYNAMIC ARTWORK-BASED AMBIENT GLOW */
+        /* FASTER, SHIFTING & MOVING FLUID AMBIENT GLOW */
         .player-ambient-glow {
             position: absolute;
-            inset: -26px -20px;
-            background: radial-gradient(circle at center, var(--dynamic-glow-color) 0%, var(--dynamic-glow-secondary) 50%, rgba(0, 0, 0, 0) 78%);
+            inset: -28px -20px;
+            background: radial-gradient(circle at center, var(--dynamic-glow-color) 0%, var(--dynamic-glow-secondary) 52%, rgba(0, 0, 0, 0) 78%);
             border-radius: 50px;
             filter: blur(34px);
             z-index: -1;
             opacity: 0.95;
-            transition: background 1.4s ease-in-out, opacity 0.8s ease;
+            transition: background 1s ease-in-out, opacity 0.6s ease;
             pointer-events: none;
+            animation: fluidGlow 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes fluidGlow {
+            0% {
+                transform: scale(0.96) translate(-6px, -4px) rotate(0deg);
+                filter: blur(30px);
+                opacity: 0.85;
+            }
+            50% {
+                transform: scale(1.06) translate(6px, 4px) rotate(3deg);
+                filter: blur(40px);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) translate(-4px, 6px) rotate(-3deg);
+                filter: blur(34px);
+                opacity: 0.9;
+            }
         }
 
         /* UNIFIED GLASS PILL */
@@ -1394,9 +1413,7 @@
             if (volPopover) volPopover.style.display = 'none';
         }
 
-        /* =========================================
-           REAL-TIME COVER ART COLOR EXTRACTION
-           ========================================= */
+        /* REAL-TIME COVER ART COLOR EXTRACTION */
         function extractCoverArtColor(imgUrl) {
             const img = new Image();
             img.crossOrigin = 'Anonymous';
@@ -1408,7 +1425,6 @@
                     const data = ctx.getImageData(0, 0, 10, 10).data;
                     let r = 0, g = 0, b = 0, count = 0;
                     for (let i = 0; i < data.length; i += 4) {
-                        // Skip pitch dark or ultra bright pixels
                         const brightness = (data[i] + data[i+1] + data[i+2]) / 3;
                         if (brightness > 25 && brightness < 235) {
                             r += data[i];
@@ -1422,16 +1438,14 @@
                         g = Math.floor(g / count);
                         b = Math.floor(b / count);
                         
-                        document.documentElement.style.setProperty('--dynamic-glow-color', `rgba(${r}, ${g}, ${b}, 0.7)`);
-                        document.documentElement.style.setProperty('--dynamic-glow-secondary', `rgba(${Math.min(255, r + 40)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)}, 0.35)`);
+                        document.documentElement.style.setProperty('--dynamic-glow-color', `rgba(${r}, ${g}, ${b}, 0.75)`);
+                        document.documentElement.style.setProperty('--dynamic-glow-secondary', `rgba(${Math.min(255, r + 45)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)}, 0.4)`);
                     }
                 } catch (e) {}
             };
         }
 
-        /* =========================================
-           PLAYLIST DRAWER: ALL VS FAVORITES TABS
-           ========================================= */
+        /* PLAYLIST DRAWER: ALL VS FAVORITES TABS */
         function switchPlaylistTab(tab) {
             currentTab = tab;
             const tabAll = document.getElementById('tab-all');
@@ -1836,7 +1850,7 @@
                         if (totalTime) totalTime.textContent = formatTime(player.getDuration());
 
                         const idx = player.getPlaylistIndex();
-                        document.querySelectorAll('.list-item').forEach((item, i) => {
+                        document.querySelectorAll('.list-item').forEach((item) => {
                             const songIdx = parseInt(item.dataset.index);
                             if (songIdx === idx) {
                                 item.className = 'list-item active';
@@ -1965,15 +1979,39 @@
             }
         }
 
+        /* ==========================================================
+           TAB-ISOLATED PLAYLIST NAVIGATION (ALL VS FAVORITES)
+           ========================================================== */
         function nextTrack() {
-            if (player && typeof player.nextVideo === 'function') {
+            if (!player || typeof player.getPlaylist !== 'function') return;
+            const fullList = player.getPlaylist();
+            if (!fullList || fullList.length === 0) return;
+            
+            loadRetryCount = 0;
+            hasStartedPlayback = true;
+
+            if (currentTab === 'fav') {
+                const favIndices = fullList.map((id, idx) => ({ id, idx })).filter(item => favorites.includes(item.id)).map(item => item.idx);
+                if (favIndices.length === 0) return;
+
                 const currIdx = player.getPlaylistIndex();
-                const playlist = player.getPlaylist();
-                const totalTracks = playlist ? playlist.length : 0;
-                
-                loadRetryCount = 0;
-                hasStartedPlayback = true;
-                
+                const currentFavPos = favIndices.indexOf(currIdx);
+
+                if (isShuffle && favIndices.length > 1) {
+                    let randomPos = currentFavPos;
+                    while (randomPos === currentFavPos) {
+                        randomPos = Math.floor(Math.random() * favIndices.length);
+                    }
+                    player.playVideoAt(favIndices[randomPos]);
+                } else if (currentFavPos === -1 || currentFavPos >= favIndices.length - 1) {
+                    player.playVideoAt(favIndices[0]);
+                } else {
+                    player.playVideoAt(favIndices[currentFavPos + 1]);
+                }
+            } else {
+                const currIdx = player.getPlaylistIndex();
+                const totalTracks = fullList.length;
+
                 if (isShuffle && totalTracks > 1) {
                     let randomIdx = currIdx;
                     while (randomIdx === currIdx) {
@@ -1985,17 +2023,34 @@
                 } else {
                     player.nextVideo();
                 }
-                setTimeout(() => updateMetadata(), 300);
             }
+            setTimeout(() => updateMetadata(), 300);
         }
 
         function prevTrack() {
-            if (player && typeof player.previousVideo === 'function') {
-                loadRetryCount = 0;
-                hasStartedPlayback = true;
+            if (!player || typeof player.getPlaylist !== 'function') return;
+            const fullList = player.getPlaylist();
+            if (!fullList || fullList.length === 0) return;
+
+            loadRetryCount = 0;
+            hasStartedPlayback = true;
+
+            if (currentTab === 'fav') {
+                const favIndices = fullList.map((id, idx) => ({ id, idx })).filter(item => favorites.includes(item.id)).map(item => item.idx);
+                if (favIndices.length === 0) return;
+
+                const currIdx = player.getPlaylistIndex();
+                const currentFavPos = favIndices.indexOf(currIdx);
+
+                if (currentFavPos <= 0) {
+                    player.playVideoAt(favIndices[favIndices.length - 1]);
+                } else {
+                    player.playVideoAt(favIndices[currentFavPos - 1]);
+                }
+            } else {
                 player.previousVideo();
-                setTimeout(() => updateMetadata(), 300);
             }
+            setTimeout(() => updateMetadata(), 300);
         }
 
         function toggleDrawer(e) {
