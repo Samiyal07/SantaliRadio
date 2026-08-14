@@ -17,8 +17,8 @@
     <link rel="preload" as="image" href="mobile_bg.webp" media="(max-width: 768px)"/>
 
     <!-- Favicon (Full Edge-to-Edge SVG Favicon) -->
-    <link rel="icon" type="image/svg+xml" href="logo.svg?v=6" sizes="any"/>
-    <link rel="apple-touch-icon" href="logo.svg?v=6"/>
+    <link rel="icon" type="image/svg+xml" href="logo.svg?v=7" sizes="any"/>
+    <link rel="apple-touch-icon" href="logo.svg?v=7"/>
 
     <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@500;700;800&family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"/>
@@ -80,7 +80,7 @@
             align-items: center;
             justify-content: center;
             gap: 18px;
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s ease;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s ease;
             pointer-events: all;
         }
 
@@ -99,23 +99,23 @@
 
         .splash-glow-ring {
             position: absolute;
-            width: 110px;
-            height: 110px;
-            background: radial-gradient(circle, rgba(197, 160, 89, 0.4) 0%, rgba(197, 160, 89, 0) 70%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.45) 0%, rgba(197, 160, 89, 0) 70%);
             border-radius: 50%;
-            animation: pulseSplashGlow 2.2s infinite ease-in-out;
+            animation: pulseSplashGlow 2s infinite ease-in-out;
         }
 
         .splash-logo {
-            width: 86px;
-            height: 86px;
+            width: 92px;
+            height: 92px;
             object-fit: contain;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             transform: translateZ(0);
             backface-visibility: hidden;
             filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.85));
-            animation: splashLogoScale 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: splashLogoScale 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .splash-title {
@@ -125,7 +125,7 @@
             color: var(--text-cream);
             letter-spacing: -0.01em;
             opacity: 0;
-            animation: fadeInSub 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInSub 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes splashLogoScale {
@@ -466,7 +466,7 @@
             z-index: 300;
         }
 
-        /* STATIC SUBTLE NATURAL AMBIENT GLOW (NO ANIMATION) */
+        /* STATIC SUBTLE NATURAL AMBIENT GLOW */
         .player-ambient-glow {
             position: absolute;
             inset: -14px -10px;
@@ -1306,7 +1306,6 @@
         let playlistMetadata = {};
         let deferredPrompt = null;
         
-        // Decoupled Browsing UI vs. Active Audio Queue Playback Source
         let browsingTab = 'all';     // Controls drawer list view ('all' or 'fav')
         let activePlaySource = 'all'; // Controls actual queue skip source ('all' or 'fav')
         
@@ -1422,8 +1421,8 @@
                         g = Math.floor(g / count);
                         b = Math.floor(b / count);
                         
-                        document.documentElement.style.setProperty('--dynamic-glow-color', `rgba(${r}, ${g}, ${b}, 0.65)`);
-                        document.documentElement.style.setProperty('--dynamic-glow-secondary', `rgba(${Math.min(255, r + 40)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)}, 0.3)`);
+                        document.documentElement.style.setProperty('--dynamic-glow-color', `rgba(${r}, ${g}, ${b}, 0.50)`);
+                        document.documentElement.style.setProperty('--dynamic-glow-secondary', `rgba(${Math.min(255, r + 40)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)}, 0.25)`);
                     }
                 } catch (e) {}
             };
@@ -1863,7 +1862,6 @@
             
             if (!fullList || !Array.isArray(fullList) || !container) return;
 
-            // Filter purely for current visual browsing tab
             const displayList = fullList.map((id, index) => ({ id, index })).filter(item => {
                 if (browsingTab === 'fav') return favorites.includes(item.id);
                 return true;
@@ -1971,7 +1969,6 @@
             }
         }
 
-        /* PLAYLIST NAVIGATION TIED STRICTLY TO ACTIVE PLAY SOURCE */
         function nextTrack() {
             if (!player || typeof player.getPlaylist !== 'function') return;
             const fullList = player.getPlaylist();
