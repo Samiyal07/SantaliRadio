@@ -39,8 +39,8 @@
             --glass-border: rgba(255, 255, 255, 0.12); /* Border outline */
 
             /* Dynamic Ambient Glow Seed (Overridden via Canvas) */
-            --dynamic-glow-color: rgba(197, 160, 89, 0.70);
-            --dynamic-glow-secondary: rgba(220, 39, 67, 0.45);
+            --dynamic-glow-color: rgba(197, 160, 89, 0.50);
+            --dynamic-glow-secondary: rgba(220, 39, 67, 0.25);
 
             /* Typography Stack */
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -466,36 +466,17 @@
             z-index: 300;
         }
 
-        /* FASTER, SHIFTING & MOVING FLUID AMBIENT GLOW */
+        /* STATIC SUBTLE NATURAL AMBIENT GLOW (NO ANIMATION) */
         .player-ambient-glow {
             position: absolute;
-            inset: -28px -20px;
-            background: radial-gradient(circle at center, var(--dynamic-glow-color) 0%, var(--dynamic-glow-secondary) 52%, rgba(0, 0, 0, 0) 78%);
-            border-radius: 50px;
-            filter: blur(34px);
+            inset: -14px -10px;
+            background: radial-gradient(circle at center, var(--dynamic-glow-color) 0%, var(--dynamic-glow-secondary) 55%, rgba(0, 0, 0, 0) 80%);
+            border-radius: 42px;
+            filter: blur(24px);
             z-index: -1;
-            opacity: 0.95;
-            transition: background 1s ease-in-out, opacity 0.6s ease;
+            opacity: 0.65;
+            transition: background 1.2s ease, opacity 0.6s ease;
             pointer-events: none;
-            animation: fluidGlow 6s ease-in-out infinite alternate;
-        }
-
-        @keyframes fluidGlow {
-            0% {
-                transform: scale(0.96) translate(-6px, -4px) rotate(0deg);
-                filter: blur(30px);
-                opacity: 0.85;
-            }
-            50% {
-                transform: scale(1.06) translate(6px, 4px) rotate(3deg);
-                filter: blur(40px);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1) translate(-4px, 6px) rotate(-3deg);
-                filter: blur(34px);
-                opacity: 0.9;
-            }
         }
 
         /* UNIFIED GLASS PILL */
@@ -614,7 +595,7 @@
             color: var(--text-cream);
         }
 
-        /* ROW 3: ERGONOMIC CONTROLS DECK (BIGGER TOUCH TARGETS) */
+        /* ROW 3: ERGONOMIC CONTROLS DECK */
         .controls-row {
             display: flex;
             align-items: center;
@@ -1324,7 +1305,10 @@
         let syncTimer = null;
         let playlistMetadata = {};
         let deferredPrompt = null;
-        let currentTab = 'all'; // 'all' or 'fav'
+        
+        // Decoupled Browsing UI vs. Active Audio Queue Playback Source
+        let browsingTab = 'all';     // Controls drawer list view ('all' or 'fav')
+        let activePlaySource = 'all'; // Controls actual queue skip source ('all' or 'fav')
         
         let sleepTimerTimeout = null;
         let sleepTimerMinutes = 0;
@@ -1438,16 +1422,16 @@
                         g = Math.floor(g / count);
                         b = Math.floor(b / count);
                         
-                        document.documentElement.style.setProperty('--dynamic-glow-color', `rgba(${r}, ${g}, ${b}, 0.75)`);
-                        document.documentElement.style.setProperty('--dynamic-glow-secondary', `rgba(${Math.min(255, r + 45)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)}, 0.4)`);
+                        document.documentElement.style.setProperty('--dynamic-glow-color', `rgba(${r}, ${g}, ${b}, 0.65)`);
+                        document.documentElement.style.setProperty('--dynamic-glow-secondary', `rgba(${Math.min(255, r + 40)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)}, 0.3)`);
                     }
                 } catch (e) {}
             };
         }
 
-        /* PLAYLIST DRAWER: ALL VS FAVORITES TABS */
+        /* PLAYLIST DRAWER: SWITCH BROWSING VIEW ONLY */
         function switchPlaylistTab(tab) {
-            currentTab = tab;
+            browsingTab = tab;
             const tabAll = document.getElementById('tab-all');
             const tabFav = document.getElementById('tab-fav');
             if (tab === 'all') {
@@ -1458,6 +1442,14 @@
                 tabAll.classList.remove('active-tab');
             }
             renderQueueWithMetadata();
+        }
+
+        /* DIRECT TRACK SELECTION (SETS ACTIVE QUEUE SOURCE) */
+        function playTrackFromList(index, source) {
+            activePlaySource = source; // 'all' or 'fav'
+            if (player && typeof player.playVideoAt === 'function') {
+                player.playVideoAt(index);
+            }
         }
 
         /* DESKTOP KEYBOARD SHORTCUTS */
@@ -1871,19 +1863,19 @@
             
             if (!fullList || !Array.isArray(fullList) || !container) return;
 
-            // Filter by Active Tab
+            // Filter purely for current visual browsing tab
             const displayList = fullList.map((id, index) => ({ id, index })).filter(item => {
-                if (currentTab === 'fav') return favorites.includes(item.id);
+                if (browsingTab === 'fav') return favorites.includes(item.id);
                 return true;
             });
 
-            if (displayList.length === 0 && currentTab === 'fav') {
+            if (displayList.length === 0 && browsingTab === 'fav') {
                 container.innerHTML = `<div class="empty-fav-msg">No favorites added yet.<br>Tap the heart icon (<i class="fas fa-heart" style="color:var(--accent-heart);"></i>) on any song to save it here!</div>`;
                 return;
             }
 
             container.innerHTML = displayList.map(({ id, index }) => `
-                <div class="list-item" id="queue-item-${index}" data-index="${index}" onclick="player.playVideoAt(${index})">
+                <div class="list-item" id="queue-item-${index}" data-index="${index}" onclick="playTrackFromList(${index}, '${browsingTab}')">
                     <span class="track-num">${index + 1}</span>
                     <div class="track-info">
                         <div class="q-title" id="q-title-${index}">
@@ -1979,9 +1971,7 @@
             }
         }
 
-        /* ==========================================================
-           TAB-ISOLATED PLAYLIST NAVIGATION (ALL VS FAVORITES)
-           ========================================================== */
+        /* PLAYLIST NAVIGATION TIED STRICTLY TO ACTIVE PLAY SOURCE */
         function nextTrack() {
             if (!player || typeof player.getPlaylist !== 'function') return;
             const fullList = player.getPlaylist();
@@ -1990,9 +1980,13 @@
             loadRetryCount = 0;
             hasStartedPlayback = true;
 
-            if (currentTab === 'fav') {
+            if (activePlaySource === 'fav') {
                 const favIndices = fullList.map((id, idx) => ({ id, idx })).filter(item => favorites.includes(item.id)).map(item => item.idx);
-                if (favIndices.length === 0) return;
+                if (favIndices.length === 0) {
+                    activePlaySource = 'all';
+                    nextTrack();
+                    return;
+                }
 
                 const currIdx = player.getPlaylistIndex();
                 const currentFavPos = favIndices.indexOf(currIdx);
@@ -2035,9 +2029,13 @@
             loadRetryCount = 0;
             hasStartedPlayback = true;
 
-            if (currentTab === 'fav') {
+            if (activePlaySource === 'fav') {
                 const favIndices = fullList.map((id, idx) => ({ id, idx })).filter(item => favorites.includes(item.id)).map(item => item.idx);
-                if (favIndices.length === 0) return;
+                if (favIndices.length === 0) {
+                    activePlaySource = 'all';
+                    prevTrack();
+                    return;
+                }
 
                 const currIdx = player.getPlaylistIndex();
                 const currentFavPos = favIndices.indexOf(currIdx);
