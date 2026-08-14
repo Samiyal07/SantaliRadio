@@ -17,8 +17,8 @@
     <link rel="preload" as="image" href="mobile_bg.webp" media="(max-width: 768px)"/>
 
     <!-- Favicon (Full Edge-to-Edge SVG Favicon) -->
-    <link rel="icon" type="image/svg+xml" href="logo.svg?v=7" sizes="any"/>
-    <link rel="apple-touch-icon" href="logo.svg?v=7"/>
+    <link rel="icon" type="image/svg+xml" href="logo.svg?v=6" sizes="any"/>
+    <link rel="apple-touch-icon" href="logo.svg?v=6"/>
 
     <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@500;700;800&family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"/>
@@ -80,7 +80,7 @@
             align-items: center;
             justify-content: center;
             gap: 18px;
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s ease;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s ease;
             pointer-events: all;
         }
 
@@ -99,23 +99,23 @@
 
         .splash-glow-ring {
             position: absolute;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(197, 160, 89, 0.45) 0%, rgba(197, 160, 89, 0) 70%);
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.4) 0%, rgba(197, 160, 89, 0) 70%);
             border-radius: 50%;
-            animation: pulseSplashGlow 2s infinite ease-in-out;
+            animation: pulseSplashGlow 2.2s infinite ease-in-out;
         }
 
         .splash-logo {
-            width: 92px;
-            height: 92px;
+            width: 86px;
+            height: 86px;
             object-fit: contain;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             transform: translateZ(0);
             backface-visibility: hidden;
             filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.85));
-            animation: splashLogoScale 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: splashLogoScale 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .splash-title {
@@ -125,7 +125,7 @@
             color: var(--text-cream);
             letter-spacing: -0.01em;
             opacity: 0;
-            animation: fadeInSub 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInSub 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes splashLogoScale {
@@ -1155,7 +1155,7 @@
                 <div class="install-brand">
                     <img src="logo.svg?v=6" alt="Logo" class="install-icon"/>
                     <div class="install-text">
-                        <span class="install-title">Santali Retro</span>
+                        <span class="install-title">Santali Retro App</span>
                         <span class="install-sub">Listen uninterrupted</span>
                     </div>
                 </div>
@@ -1305,6 +1305,7 @@
         let syncTimer = null;
         let playlistMetadata = {};
         let deferredPrompt = null;
+        let wakeLock = null;
         
         let browsingTab = 'all';     // Controls drawer list view ('all' or 'fav')
         let activePlaySource = 'all'; // Controls actual queue skip source ('all' or 'fav')
@@ -1366,9 +1367,16 @@
                 }
             });
 
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden && isPlaying && player && typeof player.playVideo === 'function') {
-                    player.playVideo();
+            // Background & Visibility Management for Uninterrupted Playback
+            document.addEventListener('visibilitychange', async () => {
+                if (!document.hidden) {
+                    if (isPlaying && player && typeof player.playVideo === 'function') {
+                        player.playVideo();
+                    }
+                    if (audioCtx && audioCtx.state === 'suspended') {
+                        await audioCtx.resume();
+                    }
+                    await requestWakeLock();
                 }
             });
 
@@ -1378,13 +1386,33 @@
 
             window.addEventListener('keydown', handleKeyboardShortcuts);
 
-            // Close popovers on outside click
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.controls-row')) {
                     closeAllPopovers();
                 }
             });
         });
+
+        /* SCREEN WAKE LOCK API (Prevents mobile background suspension) */
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator && isPlaying) {
+                try {
+                    if (!wakeLock) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        wakeLock.addEventListener('release', () => {
+                            wakeLock = null;
+                        });
+                    }
+                } catch (err) {}
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release().catch(() => {});
+                wakeLock = null;
+            }
+        }
 
         function dismissSplash() {
             if (splashEl) splashEl.classList.add('splash-hidden');
@@ -1428,7 +1456,6 @@
             };
         }
 
-        /* PLAYLIST DRAWER: SWITCH BROWSING VIEW ONLY */
         function switchPlaylistTab(tab) {
             browsingTab = tab;
             const tabAll = document.getElementById('tab-all');
@@ -1443,15 +1470,13 @@
             renderQueueWithMetadata();
         }
 
-        /* DIRECT TRACK SELECTION (SETS ACTIVE QUEUE SOURCE) */
         function playTrackFromList(index, source) {
-            activePlaySource = source; // 'all' or 'fav'
+            activePlaySource = source; 
             if (player && typeof player.playVideoAt === 'function') {
                 player.playVideoAt(index);
             }
         }
 
-        /* DESKTOP KEYBOARD SHORTCUTS */
         function handleKeyboardShortcuts(e) {
             if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
 
@@ -1486,7 +1511,6 @@
             }
         }
 
-        /* PWA SMART INSTALLATION LOGIC */
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -1518,7 +1542,6 @@
             deferredPrompt = null;
         });
 
-        /* FAVORITES / BOOKMARKING */
         function toggleFavorite() {
             if (!player || typeof player.getVideoData !== 'function') return;
             const videoUrl = player.getVideoUrl();
@@ -1548,7 +1571,6 @@
             }
         }
 
-        /* SLEEP TIMER WITH PERSISTENT BUTTON HIGHLIGHT */
         function toggleTimerPopover(e) {
             if (e) e.stopPropagation();
             const isOpen = timerPopover && timerPopover.style.display === 'flex';
@@ -1587,7 +1609,6 @@
             closeAllPopovers();
         }
 
-        /* PROCEDURAL LO-FI NATURE SYNTH */
         function initAudioCtx() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1664,7 +1685,6 @@
             }
         }
 
-        /* SHUFFLE MODE */
         function toggleShuffle() {
             isShuffle = !isShuffle;
             if (shuffleBtn) {
@@ -1673,7 +1693,7 @@
             }
         }
 
-        /* NATIVE MEDIA-SESSION LOCK SCREEN API */
+        /* NATIVE MEDIA-SESSION LOCK SCREEN API (Guarantees Background Playback) */
         function syncMediaSession(title, artist, artworkUrl) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
@@ -1741,9 +1761,7 @@
                     index: 0,
                     startSeconds: 0
                 });
-            } catch(e) {
-                console.error('Playlist cue failed:', e);
-            }
+            } catch(e) {}
 
             if (!syncTimer) {
                 syncTimer = setInterval(syncProgress, 1000);
@@ -1759,6 +1777,7 @@
                 if (playBtn) playBtn.classList.add('is-playing');
                 if (playerWindow) playerWindow.classList.add('playing');
                 if (statusText) statusText.textContent = 'Now Playing';
+                requestWakeLock();
                 updateMetadata();
             } else if (event.data === YT.PlayerState.PAUSED) {
                 isPlaying = false;
@@ -1766,6 +1785,7 @@
                 if (playBtn) playBtn.classList.remove('is-playing');
                 if (playerWindow) playerWindow.classList.remove('playing');
                 if (statusText) statusText.textContent = 'Paused';
+                releaseWakeLock();
             } else if (event.data === YT.PlayerState.BUFFERING) {
                 if (hasStartedPlayback && statusText) {
                     statusText.textContent = 'Buffering...';
@@ -1781,8 +1801,6 @@
 
         function onPlayerError(event) {
             const currIdx = player && typeof player.getPlaylistIndex === 'function' ? player.getPlaylistIndex() : 0;
-            console.warn('Playback network warning (Code: ' + event.data + '). Retrying...');
-
             if (loadRetryCount < MAX_LOAD_RETRIES) {
                 loadRetryCount++;
                 if (statusText) statusText.textContent = `Connecting (${loadRetryCount}/${MAX_LOAD_RETRIES})...`;
