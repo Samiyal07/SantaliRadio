@@ -780,6 +780,7 @@
         let isPlaying = false;
         let isShuffle = false;
         let hasStartedPlayback = false;
+        let isUserInitiatedPause = false;
         let syncTimer = null;
         let playlistMetadata = {};
         let deferredPrompt = null;
@@ -1197,6 +1198,7 @@
             if (event.data === YT.PlayerState.PLAYING) {
                 isPlaying = true;
                 hasStartedPlayback = true;
+                isUserInitiatedPause = false;
                 loadRetryCount = 0;
                 if (playIcon) playIcon.className = 'fas fa-pause';
                 if (playBtn) playBtn.classList.add('is-playing');
@@ -1210,6 +1212,16 @@
                 
                 updateMetadata();
             } else if (event.data === YT.PlayerState.PAUSED) {
+                // If the OS / YouTube paused this WITHOUT the user pressing the pause button, force resume
+                if (hasStartedPlayback && !isUserInitiatedPause) {
+                    setTimeout(() => {
+                        if (player && typeof player.playVideo === 'function') {
+                            player.playVideo();
+                        }
+                    }, 50);
+                    return;
+                }
+
                 isPlaying = false;
                 if (playIcon) playIcon.className = 'fas fa-play';
                 if (playBtn) playBtn.classList.remove('is-playing');
@@ -1410,8 +1422,10 @@
         function togglePlay() {
             if (!player) return;
             if (isPlaying) {
+                isUserInitiatedPause = true;
                 player.pauseVideo();
             } else {
+                isUserInitiatedPause = false;
                 hasStartedPlayback = true;
                 player.playVideo();
             }
