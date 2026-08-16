@@ -1,13 +1,14 @@
-// Minimal Service Worker for PWA Installability
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
-});
-
 self.addEventListener('fetch', (event) => {
-  // Let the browser handle standard fetch requests
-  event.respondWith(fetch(event.request));
+    const url = new URL(event.request.url);
+
+    // Bypass Service Worker for API calls and audio streams
+    if (url.pathname.startsWith('/api/') || url.hostname.includes('googlevideo.com')) {
+        return;
+    }
+
+    event.respondWith(
+        caches.match(event.request).then((response) => {
+            return response || fetch(event.request);
+        })
+    );
 });

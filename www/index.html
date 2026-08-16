@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <title>Santali Retro — Enjoy Santali Old Songs</title>
-    
+
     <!-- PWA Manifest & App Configuration -->
     <link rel="manifest" href="manifest.json"/>
     <meta name="theme-color" content="#0c0c0c"/>
@@ -132,7 +132,7 @@
             overflow: hidden;
             transform: translate3d(0, 0, 0);
         }
-        
+
         .backdrop-img {
             width: 100%; 
             height: 100%; 
@@ -622,7 +622,7 @@
             </h1>
         </div>
         <p>Santali Retro · Those Were the days</p>
-        
+
         <div class="hero-socials">
             <a href="https://instagram.com/nyxhasda" target="_blank" rel="noopener noreferrer" class="insta-link">
                 <i class="fab fa-instagram"></i>
@@ -665,7 +665,7 @@
     <!-- Single Floating Player Bar -->
     <div class="player-bar" id="player-bar">
         <div class="player-ambient-glow" id="player-glow"></div>
-        
+
         <!-- Live Queue & Favorites Drawer -->
         <div class="drawer" id="drawer">
             <div class="drawer-header">
@@ -682,7 +682,7 @@
         <div class="liquid-player-window" id="player-window">
             <div class="player-meta-row">
                 <img id="artwork" src="desktop_bg.webp" alt="Artwork" crossorigin="anonymous"/>
-                
+
                 <div class="track-meta">
                     <div class="marquee-container" id="marquee-box">
                         <div class="marquee-text" id="marquee-content">
@@ -776,15 +776,6 @@
     <script>
         const PLAYLIST_ID = 'PLMUmShcrNXVE';
 
-        // Public reliable Invidious & Piped fallback instances
-        const API_INSTANCES = [
-            'https://inv.nadeko.net/api/v1',
-            'https://invidious.nerdvpn.de/api/v1',
-            'https://yt.chocolatemoo53.com/api/v1',
-            'https://invidious.tiekoetter.com/api/v1'
-        ];
-
-        let currentInstanceIdx = 0;
         let playlist = [];
         let currentIndex = 0;
         let isPlaying = false;
@@ -866,11 +857,8 @@
             });
 
             audio.addEventListener('error', (e) => {
-                console.warn("Stream playback error, trying alternate server instance...", e);
-                currentInstanceIdx = (currentInstanceIdx + 1) % API_INSTANCES.length;
-                if (playlist[currentIndex]) {
-                    loadAndPlayTrack(currentIndex);
-                }
+                console.warn("Stream playback error. Skipping to next...", e);
+                setTimeout(nextTrack, 1000);
             });
 
             seekSlider.addEventListener('input', (e) => {
@@ -892,7 +880,7 @@
                 }
             });
 
-            // Initial load of playlist tracks
+            // Initial load of playlist tracks via your serverless proxy
             fetchPlaylistTracks();
         });
 
@@ -906,39 +894,39 @@
             if (volPopover) volPopover.style.display = 'none';
         }
 
-        /* 1. FETCH PLAYLIST VIA INVIDIOUS API */
+        /* 1. FETCH PLAYLIST VIA VERCEL SERVERLESS PROXY */
         async function fetchPlaylistTracks() {
             if (statusText) statusText.textContent = 'Connecting to Radio...';
-            
-            for (let i = 0; i < API_INSTANCES.length; i++) {
-                const apiBase = API_INSTANCES[(currentInstanceIdx + i) % API_INSTANCES.length];
-                try {
-                    const res = await fetch(`${apiBase}/playlists/${PLAYLIST_ID}`);
-                    if (!res.ok) continue;
-                    const data = await res.json();
-                    
-                    if (data.videos && data.videos.length > 0) {
-                        playlist = data.videos.map(v => ({
-                            id: v.videoId,
-                            title: v.title,
-                            artist: v.author || 'Santali Artist',
-                            duration: v.lengthSeconds || 240
-                        }));
-                        
-                        if (statusText) statusText.textContent = 'Radio Ready';
-                        renderQueue();
-                        updateTrackUI(0);
-                        return;
-                    }
-                } catch (e) {
-                    console.warn(`Instance ${apiBase} unavailable. Trying next...`);
+            try {
+                const res = await fetch(`/api/stream?playlistId=${PLAYLIST_ID}`);
+                if (!res.ok) throw new Error('Playlist fetch failed');
+                const data = await res.json();
+
+                const streams = data.relatedStreams || data.videos || [];
+                if (streams.length > 0) {
+                    playlist = streams.map((v, i) => {
+                        const id = v.url ? v.url.replace('/watch?v=', '') : (v.videoId || v.id);
+                        return {
+                            id: id,
+                            title: v.title || `Track ${i + 1}`,
+                            artist: v.uploaderName || v.author || 'Santali Artist',
+                            duration: v.duration || v.lengthSeconds || 240
+                        };
+                    });
+
+                    if (statusText) statusText.textContent = 'Radio Ready';
+                    renderQueue();
+                    updateTrackUI(0);
+                    return;
                 }
+            } catch (e) {
+                console.error('Failed to load playlist:', e);
             }
 
             if (statusText) statusText.textContent = 'Tap ▶ to retry connection';
         }
 
-        /* 2. LOAD DIRECT AUDIO STREAM */
+        /* 2. LOAD DIRECT AUDIO STREAM VIA VERCEL SERVERLESS PROXY */
         async function loadAndPlayTrack(index) {
             if (!playlist[index]) return;
             currentIndex = index;
@@ -947,29 +935,22 @@
             if (statusText) statusText.textContent = 'Buffering audio...';
             updateTrackUI(index);
 
-            for (let i = 0; i < API_INSTANCES.length; i++) {
-                const apiBase = API_INSTANCES[(currentInstanceIdx + i) % API_INSTANCES.length];
-                try {
-                    const res = await fetch(`${apiBase}/videos/${song.id}`);
-                    if (!res.ok) continue;
-                    const data = await res.json();
+            try {
+                const res = await fetch(`/api/stream?videoId=${song.id}`);
+                if (!res.ok) throw new Error('Stream fetch failed');
+                const data = await res.json();
 
-                    // Find best pure audio stream (m4a or webm/opus)
-                    const audioStreams = data.adaptiveFormats.filter(f => f.type && f.type.startsWith('audio/'));
-                    const bestAudio = audioStreams.find(f => f.container === 'm4a') || audioStreams[0];
-
-                    if (bestAudio && bestAudio.url) {
-                        audio.src = bestAudio.url;
-                        await audio.play();
-                        return;
-                    }
-                } catch (e) {
-                    console.warn(`Audio stream failed on ${apiBase}, trying alternate...`);
+                if (data.url) {
+                    audio.src = data.url;
+                    await audio.play();
+                    return;
                 }
+            } catch (e) {
+                console.error('Stream load error:', e);
             }
 
             if (statusText) statusText.textContent = 'Skipping unplayable track...';
-            setTimeout(nextTrack, 1000);
+            setTimeout(nextTrack, 1200);
         }
 
         function updateTrackUI(index) {
@@ -1166,7 +1147,7 @@
                 const activeBtn = document.getElementById(`tbtn-${minutes}`);
                 if (activeBtn) activeBtn.classList.add('active-timer');
                 if (timerBtn) timerBtn.classList.add('active');
-                
+
                 sleepTimerTimeout = setTimeout(() => {
                     let vol = audio.volume;
                     const fade = setInterval(() => {
