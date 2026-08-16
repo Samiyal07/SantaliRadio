@@ -12,11 +12,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <meta name="apple-mobile-web-app-title" content="Santali Retro"/>
 
-    <!-- Preload Background WebP Images for Instant Rendering -->
+    <!-- Preload Background WebP Images -->
     <link rel="preload" as="image" href="desktop_bg.webp" media="(min-width: 769px)"/>
     <link rel="preload" as="image" href="mobile_bg.webp" media="(max-width: 768px)"/>
 
-    <!-- Favicon (Full Edge-to-Edge SVG Favicon) -->
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=6" sizes="any"/>
     <link rel="apple-touch-icon" href="logo.svg?v=6"/>
 
@@ -26,32 +26,21 @@
 
     <style>
         :root {
-            /* =========================================
-               THEME COLOR VARIABLES (EDIT HERE)
-               ========================================= */
-            --accent-gold: #C5A059;         /* Active highlights, seek fill, borders */
-            --accent-live: #22c55e;         /* Live dot color */
-            --accent-heart: #f43f5e;        /* Favorite heart color */
-            --text-cream: #f5f5f7;          /* Title & main text */
-            --text-sand: #d1d1d1;           /* Subtitle & secondary text */
-            --bg-shade: #0c0c0c;            /* Body background tint */
-            --glass-bg: rgba(18, 16, 14, 0.78); /* Glass surface fill */
-            --glass-border: rgba(255, 255, 255, 0.12); /* Border outline */
-
-            /* Dynamic Ambient Glow Seed (Overridden via Canvas) */
+            --accent-gold: #C5A059;
+            --accent-live: #22c55e;
+            --accent-heart: #f43f5e;
+            --text-cream: #f5f5f7;
+            --text-sand: #d1d1d1;
+            --bg-shade: #0c0c0c;
+            --glass-bg: rgba(18, 16, 14, 0.78);
+            --glass-border: rgba(255, 255, 255, 0.12);
             --dynamic-glow-color: rgba(197, 160, 89, 0.65);
             --dynamic-glow-secondary: rgba(220, 39, 67, 0.35);
-
-            /* Typography Stack */
             --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        html { scroll-behavior: smooth; }
         body {
             font-family: var(--apple-font);
             -webkit-font-smoothing: antialiased;
@@ -67,7 +56,6 @@
             letter-spacing: -0.01em;
         }
 
-        /* CRISP ANIMATED APP LAUNCH SPLASH */
         #pwa-splash {
             position: fixed;
             inset: 0;
@@ -110,10 +98,6 @@
             width: 86px;
             height: 86px;
             object-fit: contain;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            transform: translateZ(0);
-            backface-visibility: hidden;
             filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.85));
             animation: splashLogoScale 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -123,7 +107,6 @@
             font-size: 1.4rem;
             font-weight: 800;
             color: var(--text-cream);
-            letter-spacing: -0.01em;
             opacity: 0;
             animation: fadeInSub 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -139,7 +122,6 @@
             50% { transform: scale(1.4); opacity: 0.75; }
         }
 
-        /* STATIC BACKDROP */
         .fixed-backdrop { 
             position: fixed; 
             inset: 0;
@@ -162,22 +144,15 @@
         }
 
         @media (max-width: 768px) {
-            .backdrop-img {
-                background-image: url('mobile_bg.webp');
-            }
+            .backdrop-img { background-image: url('mobile_bg.webp'); }
         }
 
-        /* HEADER & LIVE DOT */
         header {
             position: relative; z-index: 250;
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 24px;
         }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
         .status { 
             display: flex; 
             align-items: center; 
@@ -212,17 +187,11 @@
             gap: 6px;
         }
 
-        .header-install-btn {
-            display: none;
-            border-color: rgba(197, 160, 89, 0.35);
-        }
+        .header-install-btn { display: none; border-color: rgba(197, 160, 89, 0.35); }
         .header-install-btn:hover, .playlist-btn:hover {
             border-color: var(--accent-gold);
             color: var(--accent-gold);
             transform: scale(1.05);
-        }
-        .header-install-btn:active, .playlist-btn:active {
-            transform: scale(0.95);
         }
         .playlist-btn.active {
             background: var(--accent-gold);
@@ -231,17 +200,8 @@
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
         }
 
-        /* ANIMATED HERO SECTION */
-        .hero { 
-            text-align: center; 
-            margin-top: 6vh; 
-            padding: 0 16px; 
-        }
-
-        .hero-title-container {
-            display: inline-block;
-        }
-
+        .hero { text-align: center; margin-top: 6vh; padding: 0 16px; }
+        .hero-title-container { display: inline-block; }
         .hero h1 {
             font-family: 'Anek Devanagari', var(--apple-font);
             font-size: clamp(2.7rem, 11vw, 6rem);
@@ -254,28 +214,13 @@
         .title-line {
             display: block;
             animation: floatLine 6s ease-in-out infinite alternate;
-            text-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.9),
-                0 0 20px rgba(197, 160, 89, 0.25);
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(197, 160, 89, 0.25);
         }
-
-        .title-line:nth-child(2) {
-            animation-delay: -3s;
-        }
+        .title-line:nth-child(2) { animation-delay: -3s; }
 
         @keyframes floatLine {
-            0% {
-                transform: translateY(0px) rotate(0deg);
-                text-shadow: 
-                    0 10px 25px rgba(0,0,0,0.85),
-                    0 0 15px rgba(197, 160, 89, 0.2);
-            }
-            100% {
-                transform: translateY(-8px) rotate(0.5deg);
-                text-shadow: 
-                    0 20px 45px rgba(0,0,0,0.95),
-                    0 0 35px rgba(197, 160, 89, 0.5);
-            }
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-8px) rotate(0.5deg); }
         }
 
         .hero p { 
@@ -294,14 +239,7 @@
             to { opacity: 0.85; transform: translateY(0); }
         }
 
-        .hero-socials {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
+        .hero-socials { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; }
         .insta-link {
             display: inline-flex;
             align-items: center;
@@ -319,25 +257,19 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
-
         .insta-link i.fa-instagram {
             font-size: 15px;
-            background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
             background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            transition: transform 0.25s ease;
         }
-
         .insta-link:hover {
             opacity: 1;
             color: var(--text-cream);
             border-color: rgba(225, 48, 108, 0.5);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(225, 48, 108, 0.25);
         }
 
-        /* MOBILE FROSTED GLASS INSTALL BANNER */
         .install-banner-wrap {
             display: flex;
             justify-content: center;
@@ -356,50 +288,13 @@
             padding: 8px 10px 8px 14px;
             border-radius: 99px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .install-card:hover {
-            border-color: rgba(197, 160, 89, 0.4);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55), 0 0 20px rgba(197, 160, 89, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .install-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .install-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            object-fit: cover;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
-        }
-
-        .install-text {
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .install-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-cream);
-            letter-spacing: -0.01em;
-            line-height: 1.15;
-        }
-
-        .install-sub {
-            font-size: 10px;
-            color: var(--text-sand);
-            opacity: 0.65;
-            font-weight: 500;
-        }
-
+        .install-brand { display: flex; align-items: center; gap: 10px; }
+        .install-icon { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+        .install-text { text-align: left; display: flex; flex-direction: column; }
+        .install-title { font-size: 12px; font-weight: 700; color: var(--text-cream); line-height: 1.15; }
+        .install-sub { font-size: 10px; color: var(--text-sand); opacity: 0.65; font-weight: 500; }
         .install-action-btn {
             background: var(--text-cream);
             color: var(--bg-shade);
@@ -408,55 +303,21 @@
             border-radius: 99px;
             font-size: 11px;
             font-weight: 700;
-            letter-spacing: 0.04em;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex;
             align-items: center;
             gap: 6px;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
-        .install-action-btn i { font-size: 10px; }
-
-        .install-action-btn:hover {
-            background: var(--accent-gold);
-            color: #000;
-            transform: scale(1.06);
-            box-shadow: 0 0 14px rgba(197, 160, 89, 0.5);
-        }
-
-        .install-action-btn:active { transform: scale(0.94); }
-
+        .install-action-btn:hover { background: var(--accent-gold); color: #000; }
         .install-close-btn {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.45);
-            font-size: 13px;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: color 0.2s, transform 0.2s;
+            background: none; border: none; color: rgba(255, 255, 255, 0.45);
+            font-size: 13px; cursor: pointer; padding: 4px; border-radius: 50%;
         }
 
-        .install-close-btn:hover {
-            color: var(--text-cream);
-            transform: scale(1.15);
-        }
+        @media (min-width: 769px) { .install-banner-wrap { display: none !important; } }
+        @media (max-width: 768px) { .header-install-btn { display: none !important; } }
 
-        @media (min-width: 769px) {
-            .install-banner-wrap { display: none !important; }
-        }
-
-        @media (max-width: 768px) {
-            .header-install-btn { display: none !important; }
-        }
-
-        /* ==========================================================
-           SINGLE UNIFIED FLOATING PLAYER BAR
-           ========================================================== */
         .player-bar {
             position: fixed; 
             bottom: max(20px, env(safe-area-inset-bottom)); 
@@ -466,7 +327,6 @@
             z-index: 300;
         }
 
-        /* DYNAMIC ARTWORK-BASED AMBIENT GLOW */
         .player-ambient-glow {
             position: absolute;
             inset: -26px -20px;
@@ -479,7 +339,6 @@
             pointer-events: none;
         }
 
-        /* UNIFIED GLASS PILL */
         .liquid-player-window {
             background: var(--glass-bg);
             backdrop-filter: blur(28px) saturate(190%);
@@ -495,14 +354,7 @@
             position: relative;
         }
 
-        /* ROW 1: NOW PLAYING METADATA */
-        .player-meta-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            width: 100%;
-        }
-
+        .player-meta-row { display: flex; align-items: center; gap: 16px; width: 100%; }
         #artwork { 
             width: 52px; 
             height: 52px; 
@@ -514,53 +366,19 @@
             transition: transform 0.5s ease;
         }
 
-        .playing #artwork {
-            animation: spinArtwork 12s linear infinite;
-        }
+        .playing #artwork { animation: spinArtwork 12s linear infinite; }
+        @keyframes spinArtwork { 100% { transform: rotate(360deg); } }
 
-        @keyframes spinArtwork {
-            100% { transform: rotate(360deg); }
-        }
+        .track-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+        .marquee-container { width: 100%; overflow: hidden; white-space: nowrap; position: relative; }
+        .marquee-text { display: inline-block; white-space: nowrap; animation: marquee 12s linear infinite; }
+        .marquee-container:hover .marquee-text { animation-play-state: paused; }
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
 
-        .track-meta { 
-            flex: 1; 
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-        }
-        .marquee-text {
-            display: inline-block;
-            white-space: nowrap;
-            animation: marquee 12s linear infinite;
-        }
-        .marquee-container:hover .marquee-text {
-            animation-play-state: paused;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-50%); }
-        }
+        .track-name { font-size: 15.5px; font-weight: 600; color: var(--text-cream); }
+        .track-artist { font-size: 12.5px; color: var(--text-sand); opacity: 0.65; margin-top: 2px; }
 
-        .track-name { font-size: 15.5px; font-weight: 600; color: var(--text-cream); letter-spacing: -0.01em; }
-        .track-artist { font-size: 12.5px; color: var(--text-sand); opacity: 0.65; margin-top: 2px; font-weight: 400; }
-
-        /* ROW 2: INTEGRATED SEEK & TIME STATUS BAR */
-        .seek-container { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            width: 100%;
-            padding: 0 2px;
-        }
-
+        .seek-container { display: flex; align-items: center; gap: 12px; width: 100%; padding: 0 2px; }
         .slider { 
             flex: 1; 
             height: 4.5px; 
@@ -569,7 +387,6 @@
             border-radius: 4px;
             outline: none; 
             cursor: pointer; 
-            transition: background 0.1s ease;
         }
         .slider::-webkit-slider-thumb { 
             -webkit-appearance: none; 
@@ -578,11 +395,7 @@
             border-radius: 50%; 
             background: #ffffff; 
             box-shadow: 0 0 10px var(--accent-gold);
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.25);
+            cursor: pointer; 
         }
 
         .time-label { 
@@ -595,22 +408,9 @@
             color: var(--text-cream);
         }
 
-        /* ROW 3: ERGONOMIC CONTROLS DECK (BIGGER TOUCH TARGETS) */
-        .controls-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            padding-top: 2px;
-        }
+        .controls-row { display: flex; align-items: center; justify-content: space-between; width: 100%; padding-top: 2px; }
+        .controls-left, .controls-right, .controls-center { display: flex; align-items: center; gap: 8px; }
 
-        .controls-left, .controls-right, .controls-center {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* BIGGER TOUCH TARGET STANDARD BUTTONS */
         .nav-btn {
             background: none;
             border: none;
@@ -625,33 +425,12 @@
             font-size: 16px;
             transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+        .nav-btn:hover { color: var(--text-cream); background: rgba(255, 255, 255, 0.14); transform: scale(1.12); }
+        .nav-btn:active { transform: scale(0.88); }
+        .nav-btn.active { color: var(--accent-gold); background: rgba(197, 160, 89, 0.2); }
+        .like-btn.liked { color: var(--accent-heart) !important; animation: heartBeat 0.35s ease; }
+        @keyframes heartBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
 
-        .nav-btn:hover {
-            color: var(--text-cream);
-            background: rgba(255, 255, 255, 0.14);
-            transform: scale(1.12);
-        }
-
-        .nav-btn:active { 
-            transform: scale(0.88); 
-        }
-
-        .nav-btn.active {
-            color: var(--accent-gold);
-            background: rgba(197, 160, 89, 0.2);
-        }
-
-        .like-btn.liked {
-            color: var(--accent-heart) !important;
-            animation: heartBeat 0.35s ease;
-        }
-
-        @keyframes heartBeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3); }
-        }
-
-        /* BIGGER PLAY BUTTON (54PX) */
         .play-btn {
             background: var(--text-cream);
             color: var(--bg-shade);
@@ -665,29 +444,13 @@
             cursor: pointer;
             font-size: 20px;
             box-shadow: 0 4px 18px rgba(255, 255, 255, 0.3);
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, background 0.2s;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
         }
+        .play-btn:hover { transform: scale(1.1); background: #ffffff; }
+        .play-btn:active { transform: scale(0.92); }
+        .play-btn.is-playing { animation: pulseGlow 2.5s infinite alternate ease-in-out; }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 0px rgba(197, 160, 89, 0); } 100% { box-shadow: 0 0 20px rgba(197, 160, 89, 0.7); } }
 
-        .play-btn:hover {
-            transform: scale(1.1);
-            background: #ffffff;
-            box-shadow: 0 0 24px rgba(245, 245, 247, 0.6);
-        }
-
-        .play-btn:active { 
-            transform: scale(0.92); 
-        }
-
-        .play-btn.is-playing {
-            animation: pulseGlow 2.5s infinite alternate ease-in-out;
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0px rgba(197, 160, 89, 0); }
-            100% { box-shadow: 0 0 20px rgba(197, 160, 89, 0.7); }
-        }
-
-        /* POPOVERS (Upward with High Contrast Frosted Glass) */
         .deck-popover {
             position: absolute;
             bottom: calc(100% + 16px);
@@ -707,32 +470,10 @@
             min-width: 155px;
         }
 
-        @keyframes popUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .popover-header {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: rgba(245,245,247,0.6);
-            width: 100%;
-            text-align: center;
-        }
-
-        .ambient-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            width: 100%;
-            font-size: 11px;
-            color: var(--text-cream);
-        }
-
-        .ambient-btn {
+        @keyframes popUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .popover-header { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,245,247,0.6); }
+        .ambient-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; font-size: 11px; color: var(--text-cream); }
+        .ambient-btn, .timer-btn {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.12);
             color: var(--text-sand);
@@ -742,77 +483,26 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .ambient-btn.active {
-            background: var(--accent-gold);
-            color: #000;
-            border-color: var(--accent-gold);
-            font-weight: 700;
-        }
-
-        .timer-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            width: 100%;
-        }
-
-        .timer-btn {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            color: var(--text-sand);
-            padding: 8px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .timer-btn:hover {
-            color: var(--text-cream);
-            border-color: var(--accent-gold);
-        }
-
-        .timer-btn.active-timer {
+        .timer-options { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
+        .timer-btn { border-radius: 12px; padding: 8px 10px; font-weight: 600; text-align: center; }
+        .timer-btn.active-timer, .ambient-btn.active {
             background: var(--accent-gold) !important;
             color: #000 !important;
             border-color: var(--accent-gold) !important;
             font-weight: 700 !important;
         }
 
-        .vol-popover-deck {
-            flex-direction: row;
-            min-width: auto;
-            right: 0;
-            left: auto;
-        }
-
+        .vol-popover-deck { flex-direction: row; min-width: auto; right: 0; left: auto; }
         .vol-slider {
-            width: 90px;
-            height: 4px;
-            -webkit-appearance: none;
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-            outline: none;
-            cursor: pointer;
+            width: 90px; height: 4px; -webkit-appearance: none; background: rgba(255,255,255,0.2); border-radius: 4px; outline: none; cursor: pointer;
         }
-
         .vol-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: var(--accent-gold);
-            cursor: pointer;
+            -webkit-appearance: none; width: 11px; height: 11px; border-radius: 50%; background: var(--accent-gold); cursor: pointer;
         }
 
-        /* ==========================================================
-           PLAYLIST & FAVORITES DRAWER WITH SEGMENTED TABS
-           ========================================================== */
         .drawer {
             position: absolute; 
-            left: 0; 
-            right: 0;
+            left: 0; right: 0;
             bottom: calc(100% + 14px); 
             max-height: 54vh; 
             background: var(--glass-bg); 
@@ -828,286 +518,78 @@
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 12px;
-            margin-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        /* Segmented Tabs */
-        .playlist-tabs {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.06);
-            padding: 3px;
-            border-radius: 99px;
-            gap: 2px;
-        }
-
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .playlist-tabs { display: flex; align-items: center; background: rgba(255, 255, 255, 0.06); padding: 3px; border-radius: 99px; gap: 2px; }
         .tab-btn {
-            background: none;
-            border: none;
-            color: rgba(245, 245, 247, 0.6);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 6px 14px;
-            border-radius: 99px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: var(--apple-font);
+            background: none; border: none; color: rgba(245, 245, 247, 0.6); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 99px; cursor: pointer;
         }
+        .tab-btn.active-tab { background: var(--accent-gold); color: #000; }
+        .close-btn { background: none; border: none; color: rgba(255, 255, 255, 0.5); font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 50%; }
 
-        .tab-btn.active-tab {
-            background: var(--accent-gold);
-            color: #000;
-            box-shadow: 0 2px 8px rgba(197, 160, 89, 0.3);
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 16px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 50%;
-            transition: color 0.2s, transform 0.2s;
-        }
-
-        .close-btn:hover {
-            color: var(--text-cream);
-            transform: scale(1.15);
-        }
-
-        .queue-scroll-container {
-            max-height: calc(54vh - 75px);
-            overflow-y: auto;
-            padding-right: 4px;
-            padding-bottom: 24px;
-        }
-
+        .queue-scroll-container { max-height: calc(54vh - 75px); overflow-y: auto; padding-right: 4px; padding-bottom: 24px; }
         .queue-scroll-container::-webkit-scrollbar { width: 4px; }
-        .queue-scroll-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-        }
+        .queue-scroll-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
 
         .list-item { 
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px; 
-            cursor: pointer; 
-            border-radius: 14px; 
-            transition: all 0.2s ease;
-            margin-bottom: 4px;
-            border: 1px solid transparent;
+            display: flex; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; border-radius: 14px; margin-bottom: 4px; border: 1px solid transparent;
         }
-
-        .list-item:hover { 
-            background: rgba(255, 255, 255, 0.06); 
-            transform: translateX(2px);
-        }
-
-        .list-item.active { 
-            background: rgba(197, 160, 89, 0.14);
-            border: 1px solid rgba(197, 160, 89, 0.45);
-        }
-
-        .track-num {
-            font-size: 13px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.4);
-            width: 18px;
-            text-align: center;
-            flex-shrink: 0;
-            font-family: var(--apple-font);
-        }
-
-        .list-item.active .track-num {
-            color: var(--accent-gold);
-        }
-
+        .list-item:hover { background: rgba(255, 255, 255, 0.06); transform: translateX(2px); }
+        .list-item.active { background: rgba(197, 160, 89, 0.14); border: 1px solid rgba(197, 160, 89, 0.45); }
+        .track-num { font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.4); width: 18px; text-align: center; flex-shrink: 0; }
+        .list-item.active .track-num { color: var(--accent-gold); }
         .track-info { flex: 1; min-width: 0; }
+        .track-info .q-title { font-size: 13px; font-weight: 600; color: var(--text-cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .list-item.active .track-info .q-title { color: var(--accent-gold); }
+        .track-info .q-sub { font-size: 11px; color: rgba(209, 209, 209, 0.5); margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+        .q-duration { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(209, 209, 209, 0.45); }
+        .q-duration::before { content: "•"; margin-right: 6px; opacity: 0.5; }
+        .q-heart-icon { font-size: 11px; color: var(--accent-heart); margin-left: 4px; }
+        .empty-fav-msg { text-align: center; padding: 30px 10px; font-size: 12px; color: rgba(209, 209, 209, 0.5); }
 
-        .track-info .q-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-cream);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            line-height: 1.25;
-            letter-spacing: -0.01em;
-        }
-
-        .list-item.active .track-info .q-title {
-            color: var(--accent-gold);
-        }
-
-        .track-info .q-sub {
-            font-size: 11px;
-            color: rgba(209, 209, 209, 0.5);
-            margin-top: 2px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 400;
-        }
-
-        .q-duration {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: rgba(209, 209, 209, 0.45);
-        }
-
-        .q-duration::before {
-            content: "•";
-            margin-right: 6px;
-            opacity: 0.5;
-        }
-
-        .q-heart-icon {
-            font-size: 11px;
-            color: var(--accent-heart);
-            margin-left: 4px;
-        }
-
-        .empty-fav-msg {
-            text-align: center;
-            padding: 30px 10px;
-            font-size: 12px;
-            color: rgba(209, 209, 209, 0.5);
-            font-family: var(--apple-font);
-        }
-
-        /* FOOTER */
         footer {
-            width: 100%;
-            margin-top: 100vh;
-            padding: 40px 20px 150px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid var(--glass-border);
-            position: relative;
-            z-index: 20;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100%; margin-top: 100vh; padding: 40px 20px 150px; background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border); position: relative; z-index: 20; display: flex; justify-content: center; align-items: center;
         }
+        .footer-content { width: 50%; max-width: 800px; text-align: left; }
+        .footer-brand { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .footer-logo { object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
+        .footer-title { font-family: 'Anek Devanagari', var(--apple-font); font-size: 1.5rem; font-weight: 700; color: var(--text-cream); }
+        .footer-content p { font-size: 16px; line-height: 1.65; color: var(--text-sand); opacity: 0.85; margin-bottom: 12px; }
+        .footer-content a { color: var(--accent-gold); text-decoration: none; font-weight: 600; }
+        .footer-content a:hover { color: var(--text-cream); text-decoration: underline; }
 
-        .footer-content {
-            width: 50%;
-            max-width: 800px;
-            text-align: left;
-        }
-
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .footer-logo {
-            object-fit: contain;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
-        }
-
-        .footer-title {
-            font-family: 'Anek Devanagari', var(--apple-font);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-cream);
-            line-height: 1;
-        }
-
-        .footer-content p {
-            font-size: 16px;
-            line-height: 1.65;
-            color: var(--text-sand);
-            opacity: 0.85;
-            margin-bottom: 12px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-            font-weight: 400;
-        }
-
-        .footer-content p:last-child {
-            margin-bottom: 0;
-        }
-
-        .footer-content a {
-            color: var(--accent-gold);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s ease;
-        }
-
-        .footer-content a:hover {
-            color: var(--text-cream);
-            text-decoration: underline;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .footer-content { width: 80%; }
-        }
-
+        @media (max-width: 768px) { .footer-content { width: 80%; } }
         @media (max-width: 480px) {
             header { padding: 16px 20px; }
             .hero { margin-top: 3vh; }
             .hero p { letter-spacing: 0.2em; font-size: 9px; }
-            .install-card { padding: 6px 10px 6px 12px; gap: 8px; }
-            .install-title { font-size: 11px; }
-            .install-sub { font-size: 9px; }
-            .install-action-btn { padding: 6px 12px; font-size: 10px; }
-            
             .liquid-player-window { padding: 14px 16px; gap: 12px; border-radius: 28px; }
             #artwork { width: 44px; height: 44px; }
             .track-name { font-size: 14px; }
             .track-artist { font-size: 11px; }
-
             .nav-btn { width: 38px; height: 38px; font-size: 14px; }
             .play-btn { width: 48px; height: 48px; font-size: 17px; }
-            .controls-left, .controls-right, .controls-center { gap: 4px; }
-            
-            .time-label { font-size: 10px; }
-            .list-item { font-size: 13px; padding: 8px 10px; }
             .drawer { max-height: 52vh; padding: 14px 14px 10px; }
-            .queue-scroll-container { max-height: calc(52vh - 70px); padding-bottom: 30px; }
             footer { padding: 30px 16px 130px; }
             .footer-content { width: 90%; }
-            .footer-content p { font-size: 11px; }
-            .footer-brand { gap: 12px; margin-bottom: 16px; }
-            .footer-title { font-size: 1.3rem; }
         }
 
-        /* Un-throttled Offscreen YouTube Player Container */
         #player-hideout { 
             position: fixed; 
-            left: -9999px; 
-            top: -9999px; 
-            width: 1px; 
-            height: 1px; 
-            opacity: 0.01; 
+            bottom: 0;
+            right: 0;
+            width: 200px; 
+            height: 200px; 
+            opacity: 0.001; 
             pointer-events: none; 
+            z-index: -999;
         }
     </style>
 </head>
 <body>
 
-    <!-- Crisp Animated App Launch Splash -->
+    <!-- App Launch Splash -->
     <div id="pwa-splash">
         <div class="splash-icon-wrapper">
             <div class="splash-glow-ring"></div>
@@ -1127,7 +609,6 @@
             <span id="status-text">Loading Engine...</span>
         </div>
         <div class="header-actions">
-            <!-- Desktop Header Install Button -->
             <button id="pwa-header-install-btn" class="header-install-btn" onclick="triggerPWAInstall()">INSTALL</button>
             <button id="playlist-toggle-btn" class="playlist-btn" onclick="toggleDrawer(event)">PLAYLIST</button>
         </div>
@@ -1149,7 +630,6 @@
             </a>
         </div>
 
-        <!-- Mobile Floating Glass Install Badge (Max-width 768px) -->
         <div class="install-banner-wrap">
             <div class="install-card" id="pwa-install-banner">
                 <div class="install-brand">
@@ -1174,7 +654,7 @@
     <footer>
         <div class="footer-content">
             <div class="footer-brand">
-                <img src="logo.svg?v=6" alt="Jharna Are Logo" class="footer-logo" width="64" height="64"/>
+                <img src="logo.svg?v=6" alt="Logo" class="footer-logo" width="64" height="64"/>
                 <span class="footer-title">ᱥᱟᱱᱛᱟᱲᱤ ᱨᱮᱴᱨᱳ</span>
             </div>
             <p>All songs played here are embedded directly from YouTube. We do not host or store any audio or video files on our servers.</p>
@@ -1182,7 +662,7 @@
         </div>
     </footer>
 
-    <!-- SINGLE APPLE LIQUID GLASS FLOATING PLAYER SYSTEM -->
+    <!-- Single Floating Player Bar -->
     <div class="player-bar" id="player-bar">
         <div class="player-ambient-glow" id="player-glow"></div>
         
@@ -1198,10 +678,8 @@
             <div class="queue-scroll-container" id="song-list"></div>
         </div>
 
-        <!-- UNIFIED LIQUID GLASS WINDOW -->
+        <!-- Liquid Glass Window -->
         <div class="liquid-player-window" id="player-window">
-            
-            <!-- 1. Metadata Top Row (Artwork, Info & Favorite Button) -->
             <div class="player-meta-row">
                 <img id="artwork" src="desktop_bg.webp" alt="Artwork" crossorigin="anonymous"/>
                 
@@ -1214,24 +692,22 @@
                     <p id="artist-name" class="track-artist">Click ▶ PLAY to start</p>
                 </div>
 
-                <!-- Favorite / Bookmark Button -->
                 <button class="nav-btn like-btn" id="like-btn" onclick="toggleFavorite()" title="Favorite Song">
                     <i class="far fa-heart" id="like-icon"></i>
                 </button>
             </div>
 
-            <!-- 2. Integrated Scrubber / Seek Bar -->
+            <!-- Scrubber / Seek Bar -->
             <div class="seek-container">
                 <span class="time-label" id="curr">0:00</span>
                 <input type="range" id="seek" value="0" min="0" max="100" class="slider">
                 <span class="time-label" id="total">0:00</span>
             </div>
 
-            <!-- 3. Ergonomic Touch Controls Deck -->
+            <!-- Touch Controls Deck -->
             <div class="controls-row">
-                <!-- Left Utilities (Shuffle, Sleep Timer, Rain Layer) -->
                 <div class="controls-left">
-                    <button class="nav-btn" id="shuffle-btn" onclick="toggleShuffle()" title="Shuffle (Key: S)">
+                    <button class="nav-btn" id="shuffle-btn" onclick="toggleShuffle()" title="Shuffle">
                         <i class="fas fa-shuffle"></i>
                     </button>
 
@@ -1252,7 +728,7 @@
                     </div>
 
                     <div style="position:relative;">
-                        <button class="nav-btn" id="ambient-btn" onclick="toggleAmbientPopover(event)" title="Lo-Fi Nature Mixer">
+                        <button class="nav-btn" id="ambient-btn" onclick="toggleAmbientPopover(event)" title="Nature Sounds">
                             <i class="fas fa-cloud-rain"></i>
                         </button>
                         <div class="deck-popover" id="ambient-popover" style="left:0;">
@@ -1269,16 +745,14 @@
                     </div>
                 </div>
 
-                <!-- Center Core Playback (Prev, Play/Pause, Next) -->
                 <div class="controls-center">
-                    <button class="nav-btn" onclick="prevTrack()" title="Previous (Key: P)"><i class="fas fa-backward"></i></button>
-                    <button class="play-btn" id="play-btn" onclick="togglePlay()" title="Play / Pause (Key: Space)"><i id="play-icon" class="fas fa-play"></i></button>
-                    <button class="nav-btn" onclick="nextTrack()" title="Next (Key: N)"><i class="fas fa-forward"></i></button>
+                    <button class="nav-btn" onclick="prevTrack()" title="Previous"><i class="fas fa-backward"></i></button>
+                    <button class="play-btn" id="play-btn" onclick="togglePlay()" title="Play / Pause"><i id="play-icon" class="fas fa-play"></i></button>
+                    <button class="nav-btn" onclick="nextTrack()" title="Next"><i class="fas fa-forward"></i></button>
                 </div>
 
-                <!-- Right Utility (Volume with Upward Popover) -->
                 <div class="controls-right" style="position:relative;">
-                    <button class="nav-btn" onclick="toggleVolPopover(event)" title="Volume (Key: M)"><i id="vol-icon" class="fas fa-volume-high"></i></button>
+                    <button class="nav-btn" onclick="toggleVolPopover(event)" title="Volume"><i id="vol-icon" class="fas fa-volume-high"></i></button>
                     <div class="deck-popover vol-popover-deck" id="vol-popover">
                         <input type="range" id="vol-slider" class="vol-slider" min="0" max="100" value="100" oninput="setVolume(this.value)">
                     </div>
@@ -1287,12 +761,16 @@
         </div>
     </div>
 
-    <!-- Hidden YouTube Player Engine -->
+    <!-- YouTube Hidden Anchor -->
     <div id="player-hideout">
         <div id="youtube-player"></div>
     </div>
 
-    <!-- Canvas for Real-Time Color Extraction -->
+    <!-- Silent Audio Element to keep iOS / Android Background Threads Active -->
+    <audio id="silent-keepalive" loop preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA" type="audio/wav">
+    </audio>
+
     <canvas id="color-canvas" width="10" height="10" style="display:none;"></canvas>
 
     <script>
@@ -1305,11 +783,10 @@
         let syncTimer = null;
         let playlistMetadata = {};
         let deferredPrompt = null;
-        let currentTab = 'all'; // 'all' or 'fav'
+        let currentTab = 'all';
         
         let sleepTimerTimeout = null;
         let sleepTimerMinutes = 0;
-
         let favorites = JSON.parse(localStorage.getItem('santali_favs') || '[]');
 
         let loadRetryCount = 0;
@@ -1319,7 +796,7 @@
         let rainNode = null;
         let vinylNode = null;
 
-        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, playerWindow, playlistToggleBtn, pwaInstallBanner, pwaHeaderInstallBtn, volIcon, volPopover, shuffleBtn, likeIcon, likeBtn, playerGlow, timerPopover, ambientPopover, splashEl, colorCanvas;
+        let statusText, titleEl, artistEl, playIcon, playBtn, seekSlider, currTime, totalTime, artwork, playerWindow, playlistToggleBtn, pwaInstallBanner, pwaHeaderInstallBtn, volIcon, volPopover, shuffleBtn, likeIcon, likeBtn, playerGlow, timerPopover, ambientPopover, splashEl, colorCanvas, silentAudio;
 
         document.addEventListener('DOMContentLoaded', () => {
             splashEl = document.getElementById('pwa-splash');
@@ -1345,13 +822,10 @@
             timerPopover = document.getElementById('timer-popover');
             ambientPopover = document.getElementById('ambient-popover');
             colorCanvas = document.getElementById('color-canvas');
+            silentAudio = document.getElementById('silent-keepalive');
 
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            if (isStandalone) {
-                setTimeout(() => dismissSplash(), 1600);
-            } else {
-                setTimeout(() => dismissSplash(), 400);
-            }
+            setTimeout(() => dismissSplash(), isStandalone ? 1600 : 400);
 
             seekSlider.addEventListener('input', (e) => {
                 if (player && typeof player.getDuration === 'function') {
@@ -1364,19 +838,12 @@
                 }
             });
 
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden && isPlaying && player && typeof player.playVideo === 'function') {
-                    player.playVideo();
-                }
-            });
-
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js').catch(() => {});
             }
 
             window.addEventListener('keydown', handleKeyboardShortcuts);
 
-            // Close popovers on outside click
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.controls-row')) {
                     closeAllPopovers();
@@ -1394,9 +861,6 @@
             if (volPopover) volPopover.style.display = 'none';
         }
 
-        /* =========================================
-           REAL-TIME COVER ART COLOR EXTRACTION
-           ========================================= */
         function extractCoverArtColor(imgUrl) {
             const img = new Image();
             img.crossOrigin = 'Anonymous';
@@ -1408,7 +872,6 @@
                     const data = ctx.getImageData(0, 0, 10, 10).data;
                     let r = 0, g = 0, b = 0, count = 0;
                     for (let i = 0; i < data.length; i += 4) {
-                        // Skip pitch dark or ultra bright pixels
                         const brightness = (data[i] + data[i+1] + data[i+2]) / 3;
                         if (brightness > 25 && brightness < 235) {
                             r += data[i];
@@ -1421,7 +884,6 @@
                         r = Math.floor(r / count);
                         g = Math.floor(g / count);
                         b = Math.floor(b / count);
-                        
                         document.documentElement.style.setProperty('--dynamic-glow-color', `rgba(${r}, ${g}, ${b}, 0.7)`);
                         document.documentElement.style.setProperty('--dynamic-glow-secondary', `rgba(${Math.min(255, r + 40)}, ${Math.max(0, g - 20)}, ${Math.max(0, b - 20)}, 0.35)`);
                     }
@@ -1429,9 +891,6 @@
             };
         }
 
-        /* =========================================
-           PLAYLIST DRAWER: ALL VS FAVORITES TABS
-           ========================================= */
         function switchPlaylistTab(tab) {
             currentTab = tab;
             const tabAll = document.getElementById('tab-all');
@@ -1446,10 +905,8 @@
             renderQueueWithMetadata();
         }
 
-        /* DESKTOP KEYBOARD SHORTCUTS */
         function handleKeyboardShortcuts(e) {
             if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-
             switch (e.code) {
                 case 'Space':
                     e.preventDefault();
@@ -1481,7 +938,6 @@
             }
         }
 
-        /* PWA SMART INSTALLATION LOGIC */
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -1513,7 +969,6 @@
             deferredPrompt = null;
         });
 
-        /* FAVORITES / BOOKMARKING */
         function toggleFavorite() {
             if (!player || typeof player.getVideoData !== 'function') return;
             const videoUrl = player.getVideoUrl();
@@ -1543,7 +998,6 @@
             }
         }
 
-        /* SLEEP TIMER WITH PERSISTENT BUTTON HIGHLIGHT */
         function toggleTimerPopover(e) {
             if (e) e.stopPropagation();
             const isOpen = timerPopover && timerPopover.style.display === 'flex';
@@ -1582,7 +1036,6 @@
             closeAllPopovers();
         }
 
-        /* PROCEDURAL LO-FI NATURE SYNTH */
         function initAudioCtx() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1659,7 +1112,6 @@
             }
         }
 
-        /* SHUFFLE MODE */
         function toggleShuffle() {
             isShuffle = !isShuffle;
             if (shuffleBtn) {
@@ -1668,7 +1120,6 @@
             }
         }
 
-        /* NATIVE MEDIA-SESSION LOCK SCREEN API */
         function syncMediaSession(title, artist, artworkUrl) {
             if ('mediaSession' in navigator) {
                 navigator.mediaSession.metadata = new MediaMetadata({
@@ -1728,7 +1179,6 @@
 
         function onPlayerReady(event) {
             if (statusText) statusText.textContent = 'Radio Ready';
-            
             try {
                 event.target.cuePlaylist({
                     listType: 'playlist',
@@ -1736,9 +1186,7 @@
                     index: 0,
                     startSeconds: 0
                 });
-            } catch(e) {
-                console.error('Playlist cue failed:', e);
-            }
+            } catch(e) {}
 
             if (!syncTimer) {
                 syncTimer = setInterval(syncProgress, 1000);
@@ -1754,6 +1202,12 @@
                 if (playBtn) playBtn.classList.add('is-playing');
                 if (playerWindow) playerWindow.classList.add('playing');
                 if (statusText) statusText.textContent = 'Now Playing';
+                
+                // Play silent keepalive HTML5 audio to keep mobile OS media thread active
+                if (silentAudio) {
+                    silentAudio.play().catch(() => {});
+                }
+                
                 updateMetadata();
             } else if (event.data === YT.PlayerState.PAUSED) {
                 isPlaying = false;
@@ -1761,6 +1215,10 @@
                 if (playBtn) playBtn.classList.remove('is-playing');
                 if (playerWindow) playerWindow.classList.remove('playing');
                 if (statusText) statusText.textContent = 'Paused';
+                
+                if (silentAudio) {
+                    silentAudio.pause();
+                }
             } else if (event.data === YT.PlayerState.BUFFERING) {
                 if (hasStartedPlayback && statusText) {
                     statusText.textContent = 'Buffering...';
@@ -1776,8 +1234,6 @@
 
         function onPlayerError(event) {
             const currIdx = player && typeof player.getPlaylistIndex === 'function' ? player.getPlaylistIndex() : 0;
-            console.warn('Playback network warning (Code: ' + event.data + '). Retrying...');
-
             if (loadRetryCount < MAX_LOAD_RETRIES) {
                 loadRetryCount++;
                 if (statusText) statusText.textContent = `Connecting (${loadRetryCount}/${MAX_LOAD_RETRIES})...`;
@@ -1814,11 +1270,8 @@
                         if (artistEl) artistEl.textContent = artist;
 
                         if (statusText) {
-                            if (isPlaying) {
-                                statusText.textContent = 'Now Playing';
-                            } else if (!hasStartedPlayback || statusText.textContent === 'Radio Ready') {
-                                statusText.textContent = 'On Air — Santali Radio';
-                            }
+                            if (isPlaying) statusText.textContent = 'Now Playing';
+                            else if (!hasStartedPlayback || statusText.textContent === 'Radio Ready') statusText.textContent = 'On Air — Santali Radio';
                         }
 
                         let artUrl = 'desktop_bg.webp';
@@ -1836,7 +1289,7 @@
                         if (totalTime) totalTime.textContent = formatTime(player.getDuration());
 
                         const idx = player.getPlaylistIndex();
-                        document.querySelectorAll('.list-item').forEach((item, i) => {
+                        document.querySelectorAll('.list-item').forEach((item) => {
                             const songIdx = parseInt(item.dataset.index);
                             if (songIdx === idx) {
                                 item.className = 'list-item active';
@@ -1857,7 +1310,6 @@
             
             if (!fullList || !Array.isArray(fullList) || !container) return;
 
-            // Filter by Active Tab
             const displayList = fullList.map((id, index) => ({ id, index })).filter(item => {
                 if (currentTab === 'fav') return favorites.includes(item.id);
                 return true;
