@@ -3,6 +3,7 @@
     "@anuradev/capacitor-background-mode": "^8.1.0",
     "@capacitor/android": "^8.5.0",
     "@capacitor/cli": "^8.5.0",
-    "@capacitor/core": "^8.5.0"
+    "@capacitor/core": "^8.5.0",
+    "play-dl": "^1.9.7"
   }
 }

@@ -826,7 +826,7 @@
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             setTimeout(() => dismissSplash(), isStandalone ? 1600 : 400);
 
-            // Audio Element Event Listeners (Native Background Ready)
+            // Native Audio Event Listeners
             audio.addEventListener('play', () => {
                 isPlaying = true;
                 if (playIcon) playIcon.className = 'fas fa-pause';
@@ -858,7 +858,7 @@
             });
 
             audio.addEventListener('error', (e) => {
-                console.warn("Stream playback error. Skipping to next...", e);
+                console.warn("Audio stream playback failed, trying next track...", e);
                 setTimeout(nextTrack, 1000);
             });
 
@@ -881,7 +881,7 @@
                 }
             });
 
-            // Initial load of playlist tracks via your serverless proxy
+            // Initial playlist load
             fetchPlaylistTracks();
         });
 
@@ -895,7 +895,7 @@
             if (volPopover) volPopover.style.display = 'none';
         }
 
-        /* 1. FETCH PLAYLIST VIA VERCEL SERVERLESS PROXY */
+        /* 1. FETCH PLAYLIST VIA SERVERLESS PROXY */
         async function fetchPlaylistTracks() {
             if (statusText) statusText.textContent = 'Connecting to Radio...';
             try {
@@ -903,14 +903,14 @@
                 if (!res.ok) throw new Error('Playlist fetch failed');
                 const data = await res.json();
 
-                const streams = data.relatedStreams || data.videos || [];
-                if (streams.length > 0) {
-                    playlist = streams.map((v, i) => {
-                        const id = v.url ? v.url.replace('/watch?v=', '') : (v.videoId || v.id);
+                const list = data.videos || data.relatedStreams || [];
+                if (list.length > 0) {
+                    playlist = list.map((v, i) => {
+                        const id = v.id || (v.url ? v.url.replace('/watch?v=', '') : v.videoId);
                         return {
                             id: id,
                             title: v.title || `Track ${i + 1}`,
-                            artist: v.uploaderName || v.author || 'Santali Artist',
+                            artist: v.artist || v.uploaderName || v.author || 'Santali Artist',
                             duration: v.duration || v.lengthSeconds || 240
                         };
                     });
@@ -927,7 +927,7 @@
             if (statusText) statusText.textContent = 'Tap ▶ to retry connection';
         }
 
-        /* 2. LOAD DIRECT AUDIO STREAM VIA VERCEL SERVERLESS PROXY */
+        /* 2. LOAD DIRECT AUDIO STREAM */
         async function loadAndPlayTrack(index) {
             if (!playlist[index]) return;
             currentIndex = index;

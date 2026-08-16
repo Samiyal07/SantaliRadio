@@ -1,6 +1,8 @@
+import play from 'play-dl';
+
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
@@ -9,95 +11,87 @@ export default async function handler(req, res) {
 
     const { videoId, playlistId } = req.query;
 
-    // 1. Fetch Playlist Info using NoEmbed & Invidious Fallbacks
+    // 1. Fetch Playlist Info
     if (playlistId) {
-        const INVIDIOUS_ENDPOINTS = [
-            'https://inv.nadeko.net/api/v1',
+        try {
+            // Using YouTube Data API mirror or public playlist scraper
+            const playlistUrl = `https://www.youtube.com/playlist?list=${playlistId}`;
+            const playlistInfo = await play.playlist_info(playlistUrl, { incomplete: true });
+            const videos = await playlistInfo.all_videos();
+
+            if (videos && videos.length > 0) {
+                const formatted = videos.map((v, i) => ({
+                    id: v.id,
+                    title: v.title || `Track ${i + 1}`,
+                    artist: v.channel?.name || 'Santali Artist',
+                    duration: v.durationInSec || 240
+                }));
+                return res.status(200).json({ videos: formatted });
+            }
+        } catch (e) {
+            console.error('Playlist extraction error:', e);
+        }
+
+        // Fallback: Invidious Public Mirrors
+        const FALLBACK_INVIDIOUS = [
             'https://invidious.nerdvpn.de/api/v1',
-            'https://invidious.tiekoetter.com/api/v1',
+            'https://inv.nadeko.net/api/v1',
             'https://vid.priv.au/api/v1'
         ];
 
-        for (const base of INVIDIOUS_ENDPOINTS) {
+        for (const base of FALLBACK_INVIDIOUS) {
             try {
-                const response = await fetch(`${base}/playlists/${playlistId}`, {
-                    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-                    signal: AbortSignal.timeout(5000)
+                const r = await fetch(`${base}/playlists/${playlistId}`, {
+                    headers: { 'User-Agent': 'Mozilla/5.0' },
+                    signal: AbortSignal.timeout(4000)
                 });
-                if (response.ok) {
-                    const data = await response.json();
+                if (r.ok) {
+                    const data = await r.json();
                     return res.status(200).json(data);
                 }
-            } catch (e) {}
+            } catch (err) {}
         }
+
         return res.status(502).json({ error: 'Playlist resolution failed' });
     }
 
-    // 2. Fetch Direct High-Speed Audio Stream using Cobalt Engine
+    // 2. Extract Direct Audio URL for Video
     if (videoId) {
-        const COBALT_INSTANCES = [
-            'https://api.cobalt.tools',
-            'https://cobalt-api.kwiatekm.tokyo',
-            'https://api.hyper.lol'
-        ];
-
-        const targetUrl = `https://www.youtube.com/watch?v=${videoId}`;
-
-        for (const instance of COBALT_INSTANCES) {
-            try {
-                const cobaltRes = await fetch(instance, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'User-Agent': 'Mozilla/5.0'
-                    },
-                    body: JSON.stringify({
-                        url: targetUrl,
-                        downloadMode: 'audio',
-                        audioFormat: 'best'
-                    }),
-                    signal: AbortSignal.timeout(7000)
-                });
-
-                if (cobaltRes.ok) {
-                    const data = await cobaltRes.json();
-                    const audioUrl = data.url || (data.audio && data.audio.url);
-
-                    if (audioUrl) {
-                        return res.status(200).json({ url: audioUrl });
-                    }
-                }
-            } catch (e) {}
+        try {
+            const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+            const stream = await play.stream(videoUrl, { quality: 2 }); // Quality 2 = best audio
+            if (stream && stream.url) {
+                return res.status(200).json({ url: stream.url });
+            }
+        } catch (e) {
+            console.warn('play-dl direct stream failed, using piped fallback...', e.message);
         }
 
-        // Fallback: Direct Invidious video parser
-        const INVIDIOUS_ENDPOINTS = [
-            'https://inv.nadeko.net/api/v1',
-            'https://invidious.nerdvpn.de/api/v1',
-            'https://vid.priv.au/api/v1'
+        // Fallback: Piped & Invidious Audio format extractors
+        const PIPED_FALLBACKS = [
+            `https://pipedapi.kavin.rocks/streams/${videoId}`,
+            `https://api.piped.privacy.com.de/streams/${videoId}`,
+            `https://api.piped.projectsegfau.lt/streams/${videoId}`
         ];
 
-        for (const base of INVIDIOUS_ENDPOINTS) {
+        for (const endpoint of PIPED_FALLBACKS) {
             try {
-                const response = await fetch(`${base}/videos/${videoId}`, {
+                const r = await fetch(endpoint, {
                     headers: { 'User-Agent': 'Mozilla/5.0' },
-                    signal: AbortSignal.timeout(5000)
+                    signal: AbortSignal.timeout(4000)
                 });
-                if (response.ok) {
-                    const data = await response.json();
-                    const streams = (data.adaptiveFormats || []).filter(
-                        (f) => f.type && f.type.startsWith('audio/')
-                    );
-                    const best = streams.find((f) => f.container === 'm4a') || streams[0];
+                if (r.ok) {
+                    const data = await r.json();
+                    const audioStreams = data.audioStreams || [];
+                    const best = audioStreams.find(s => s.format === 'M4A' || s.quality === '128kbps') || audioStreams[0];
                     if (best && best.url) {
                         return res.status(200).json({ url: best.url });
                     }
                 }
-            } catch (e) {}
+            } catch (err) {}
         }
 
-        return res.status(502).json({ error: 'Failed to extract audio stream' });
+        return res.status(502).json({ error: 'Audio stream extraction failed' });
     }
 
     return res.status(400).json({ error: 'Missing videoId or playlistId' });
