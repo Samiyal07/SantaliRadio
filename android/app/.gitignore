@@ -1,0 +1,10 @@
+/build/*
+!/build/.npmkeep
+node_modules/
+package-lock.json
+
+# Android Build Outputs
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties

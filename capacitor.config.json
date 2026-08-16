@@ -1,0 +1,6 @@
+{
+  "appId": "com.santaliretro.app",
+  "appName": "Santali Retro",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
