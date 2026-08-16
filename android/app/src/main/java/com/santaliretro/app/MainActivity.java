@@ -1,7 +1,8 @@
 package com.santaliretro.app;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import com.getcapacitor.BridgeActivity;
@@ -11,9 +12,14 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Prevent screen from timing out while active
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // Start Foreground Service so Android does not suspend the process
+        Intent serviceIntent = new Intent(this, BackgroundAudioService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
     }
 
     @Override
@@ -23,25 +29,23 @@ public class MainActivity extends BridgeActivity {
             WebView webView = this.bridge.getWebView();
             WebSettings settings = webView.getSettings();
             settings.setMediaPlaybackRequiresUserGesture(false);
-            
-            // Resume JS timers and DOM processing
+            settings.setJavaScriptCanOpenWindowsAutomatically(true);
             webView.resumeTimers();
-            webView.onResume();
         }
     }
 
     @Override
     public void onPause() {
-        // DO NOT call super.onPause() or webView.onPause() to keep audio rendering
+        // Intentionally keep timers alive and do not pause WebView
         super.onPause();
         if (this.bridge != null && this.bridge.getWebView() != null) {
-            // Keep JavaScript timers and WebAudio/Media threads running in the background
             this.bridge.getWebView().resumeTimers();
         }
     }
 
     @Override
     public void onStop() {
+        // Intentionally keep timers alive
         super.onStop();
         if (this.bridge != null && this.bridge.getWebView() != null) {
             this.bridge.getWebView().resumeTimers();
