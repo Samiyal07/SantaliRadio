@@ -1,9 +1,0 @@
-{
-  "appId": "com.santaliretro.app",
-  "appName": "Santali Retro",
-  "webDir": "www",
-  "server": {
-    "url": "https://santaliretro.vercel.app/",
-    "cleartext": true
-  }
-}
